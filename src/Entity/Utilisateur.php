@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\Get;
 use App\Repository\UtilisateurRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Post;
@@ -65,6 +67,45 @@ class Utilisateur
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $billingAdress = null;
+
+    /**
+     * @var Collection<int, Annonce>
+     */
+    #[ORM\OneToMany(targetEntity: Annonce::class, mappedBy: 'annonce_utilisateur')]
+    private Collection $annonces;
+
+    /**
+     * @var Collection<int, Logement>
+     */
+    #[ORM\OneToMany(targetEntity: Logement::class, mappedBy: 'logement_utilisateur')]
+    private Collection $logements;
+
+    /**
+     * @var Collection<int, Commentaire>
+     */
+    #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'commentaire_utilisateur')]
+    private Collection $commentaires;
+
+    /**
+     * @var Collection<int, Message>
+     */
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'message_receiver')]
+    private Collection $messages;
+
+    /**
+     * @var Collection<int, Message>
+     */
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'message_sender')]
+    private Collection $messagesend;
+
+    public function __construct()
+    {
+        $this->annonces = new ArrayCollection();
+        $this->logements = new ArrayCollection();
+        $this->commentaires = new ArrayCollection();
+        $this->messages = new ArrayCollection();
+        $this->messagesend = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -199,6 +240,156 @@ class Utilisateur
     public function setBillingAdress(?string $billingAdress): static
     {
         $this->billingAdress = $billingAdress;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Annonce>
+     */
+    public function getAnnonces(): Collection
+    {
+        return $this->annonces;
+    }
+
+    public function addAnnonce(Annonce $annonce): static
+    {
+        if (!$this->annonces->contains($annonce)) {
+            $this->annonces->add($annonce);
+            $annonce->setAnnonceUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAnnonce(Annonce $annonce): static
+    {
+        if ($this->annonces->removeElement($annonce)) {
+            // set the owning side to null (unless already changed)
+            if ($annonce->getAnnonceUtilisateur() === $this) {
+                $annonce->setAnnonceUtilisateur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Logement>
+     */
+    public function getLogements(): Collection
+    {
+        return $this->logements;
+    }
+
+    public function addLogement(Logement $logement): static
+    {
+        if (!$this->logements->contains($logement)) {
+            $this->logements->add($logement);
+            $logement->setLogementUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLogement(Logement $logement): static
+    {
+        if ($this->logements->removeElement($logement)) {
+            // set the owning side to null (unless already changed)
+            if ($logement->getLogementUtilisateur() === $this) {
+                $logement->setLogementUtilisateur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Commentaire>
+     */
+    public function getCommentaires(): Collection
+    {
+        return $this->commentaires;
+    }
+
+    public function addCommentaire(Commentaire $commentaire): static
+    {
+        if (!$this->commentaires->contains($commentaire)) {
+            $this->commentaires->add($commentaire);
+            $commentaire->setCommentaireUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentaire(Commentaire $commentaire): static
+    {
+        if ($this->commentaires->removeElement($commentaire)) {
+            // set the owning side to null (unless already changed)
+            if ($commentaire->getCommentaireUtilisateur() === $this) {
+                $commentaire->setCommentaireUtilisateur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getMessages(): Collection
+    {
+        return $this->messages;
+    }
+
+    public function addMessage(Message $message): static
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages->add($message);
+            $message->setMessageReceiver($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessage(Message $message): static
+    {
+        if ($this->messages->removeElement($message)) {
+            // set the owning side to null (unless already changed)
+            if ($message->getMessageReceiver() === $this) {
+                $message->setMessageReceiver(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getMessagesend(): Collection
+    {
+        return $this->messagesend;
+    }
+
+    public function addMessagesend(Message $messagesend): static
+    {
+        if (!$this->messagesend->contains($messagesend)) {
+            $this->messagesend->add($messagesend);
+            $messagesend->setMessageSender($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessagesend(Message $messagesend): static
+    {
+        if ($this->messagesend->removeElement($messagesend)) {
+            // set the owning side to null (unless already changed)
+            if ($messagesend->getMessageSender() === $this) {
+                $messagesend->setMessageSender(null);
+            }
+        }
 
         return $this;
     }

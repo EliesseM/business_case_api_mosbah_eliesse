@@ -37,9 +37,29 @@ class Annonce
     #[ORM\ManyToMany(targetEntity: Service::class, inversedBy: 'annonces')]
     private Collection $services;
 
+    /**
+     * @var Collection<int, Indisponibilite>
+     */
+    #[ORM\OneToMany(targetEntity: Indisponibilite::class, mappedBy: 'annonce_indisponibilite')]
+    private Collection $indisponibilites;
+
+    #[ORM\ManyToOne(inversedBy: 'annonces')]
+    private ?Logement $annonce_logement = null;
+
+    #[ORM\ManyToOne(inversedBy: 'annonces')]
+    private ?Utilisateur $annonce_utilisateur = null;
+
+    /**
+     * @var Collection<int, Reservation>
+     */
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'reservation_annonce')]
+    private Collection $reservations;
+
     public function __construct()
     {
         $this->services = new ArrayCollection();
+        $this->indisponibilites = new ArrayCollection();
+        $this->reservations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -127,6 +147,90 @@ class Annonce
     public function removeService(Service $service): static
     {
         $this->services->removeElement($service);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Indisponibilite>
+     */
+    public function getIndisponibilites(): Collection
+    {
+        return $this->indisponibilites;
+    }
+
+    public function addIndisponibilite(Indisponibilite $indisponibilite): static
+    {
+        if (!$this->indisponibilites->contains($indisponibilite)) {
+            $this->indisponibilites->add($indisponibilite);
+            $indisponibilite->setAnnonceIndisponibilite($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIndisponibilite(Indisponibilite $indisponibilite): static
+    {
+        if ($this->indisponibilites->removeElement($indisponibilite)) {
+            // set the owning side to null (unless already changed)
+            if ($indisponibilite->getAnnonceIndisponibilite() === $this) {
+                $indisponibilite->setAnnonceIndisponibilite(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getAnnonceLogement(): ?Logement
+    {
+        return $this->annonce_logement;
+    }
+
+    public function setAnnonceLogement(?Logement $annonce_logement): static
+    {
+        $this->annonce_logement = $annonce_logement;
+
+        return $this;
+    }
+
+    public function getAnnonceUtilisateur(): ?Utilisateur
+    {
+        return $this->annonce_utilisateur;
+    }
+
+    public function setAnnonceUtilisateur(?Utilisateur $annonce_utilisateur): static
+    {
+        $this->annonce_utilisateur = $annonce_utilisateur;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Reservation>
+     */
+    public function getReservations(): Collection
+    {
+        return $this->reservations;
+    }
+
+    public function addReservation(Reservation $reservation): static
+    {
+        if (!$this->reservations->contains($reservation)) {
+            $this->reservations->add($reservation);
+            $reservation->setReservationAnnonce($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReservation(Reservation $reservation): static
+    {
+        if ($this->reservations->removeElement($reservation)) {
+            // set the owning side to null (unless already changed)
+            if ($reservation->getReservationAnnonce() === $this) {
+                $reservation->setReservationAnnonce(null);
+            }
+        }
 
         return $this;
     }

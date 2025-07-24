@@ -57,10 +57,20 @@ class Logement
     #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'logement_image')]
     private Collection $images;
 
+    /**
+     * @var Collection<int, Annonce>
+     */
+    #[ORM\OneToMany(targetEntity: Annonce::class, mappedBy: 'annonce_logement')]
+    private Collection $annonces;
+
+    #[ORM\ManyToOne(inversedBy: 'logements')]
+    private ?Utilisateur $logement_utilisateur = null;
+
     public function __construct()
     {
         $this->equipements = new ArrayCollection();
         $this->images = new ArrayCollection();
+        $this->annonces = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -238,6 +248,48 @@ class Logement
                 $image->setLogementImage(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Annonce>
+     */
+    public function getAnnonces(): Collection
+    {
+        return $this->annonces;
+    }
+
+    public function addAnnonce(Annonce $annonce): static
+    {
+        if (!$this->annonces->contains($annonce)) {
+            $this->annonces->add($annonce);
+            $annonce->setAnnonceLogement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAnnonce(Annonce $annonce): static
+    {
+        if ($this->annonces->removeElement($annonce)) {
+            // set the owning side to null (unless already changed)
+            if ($annonce->getAnnonceLogement() === $this) {
+                $annonce->setAnnonceLogement(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getLogementUtilisateur(): ?Utilisateur
+    {
+        return $this->logement_utilisateur;
+    }
+
+    public function setLogementUtilisateur(?Utilisateur $logement_utilisateur): static
+    {
+        $this->logement_utilisateur = $logement_utilisateur;
 
         return $this;
     }

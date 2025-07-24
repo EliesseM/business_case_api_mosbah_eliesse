@@ -23,6 +23,12 @@ class Commentaire
     #[ORM\Column]
     private ?\DateTime $datePublication = null;
 
+    #[ORM\ManyToOne(inversedBy: 'commentaires')]
+    private ?Utilisateur $commentaire_utilisateur = null;
+
+    #[ORM\ManyToOne(inversedBy: 'commentaires')]
+    private ?Reservation $commentaire_reservation = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -60,6 +66,30 @@ class Commentaire
     public function setDatePublication(\DateTime $datePublication): static
     {
         $this->datePublication = $datePublication;
+
+        return $this;
+    }
+
+    public function getCommentaireUtilisateur(): ?Utilisateur
+    {
+        return $this->commentaire_utilisateur;
+    }
+
+    public function setCommentaireUtilisateur(?Utilisateur $commentaire_utilisateur): static
+    {
+        $this->commentaire_utilisateur = $commentaire_utilisateur;
+
+        return $this;
+    }
+
+    public function getCommentaireReservation(): ?Reservation
+    {
+        return $this->commentaire_reservation;
+    }
+
+    public function setCommentaireReservation(?Reservation $commentaire_reservation): static
+    {
+        $this->commentaire_reservation = $commentaire_reservation;
 
         return $this;
     }

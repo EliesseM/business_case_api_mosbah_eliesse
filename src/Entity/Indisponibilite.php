@@ -23,6 +23,9 @@ class Indisponibilite
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
+    #[ORM\ManyToOne(inversedBy: 'indisponibilites')]
+    private ?Annonce $annonce_indisponibilite = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -60,6 +63,18 @@ class Indisponibilite
     public function setDescription(string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getAnnonceIndisponibilite(): ?Annonce
+    {
+        return $this->annonce_indisponibilite;
+    }
+
+    public function setAnnonceIndisponibilite(?Annonce $annonce_indisponibilite): static
+    {
+        $this->annonce_indisponibilite = $annonce_indisponibilite;
 
         return $this;
     }

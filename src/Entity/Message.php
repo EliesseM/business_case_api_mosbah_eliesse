@@ -20,6 +20,12 @@ class Message
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[ORM\ManyToOne(inversedBy: 'messages')]
+    private ?Utilisateur $message_receiver = null;
+
+    #[ORM\ManyToOne(inversedBy: 'messagesend')]
+    private ?Utilisateur $message_sender = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -45,6 +51,30 @@ class Message
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getMessageReceiver(): ?Utilisateur
+    {
+        return $this->message_receiver;
+    }
+
+    public function setMessageReceiver(?Utilisateur $message_receiver): static
+    {
+        $this->message_receiver = $message_receiver;
+
+        return $this;
+    }
+
+    public function getMessageSender(): ?Utilisateur
+    {
+        return $this->message_sender;
+    }
+
+    public function setMessageSender(?Utilisateur $message_sender): static
+    {
+        $this->message_sender = $message_sender;
 
         return $this;
     }
