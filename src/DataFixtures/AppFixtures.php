@@ -14,12 +14,24 @@ use App\Entity\Service;
 use App\Entity\Utilisateur;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+
 use function Symfony\Component\String\s;
 
 class AppFixtures extends Fixture
 {
+    private UserPasswordHasherInterface $passwordHasher;
+
+    public function __construct(UserPasswordHasherInterface $passwordHasher)
+    {
+        $this->passwordHasher = $passwordHasher;
+    }
+
+
+
     public function load(ObjectManager $manager): void
     {
+
         // UTILISATEURS
 
         $usersData = [
@@ -35,21 +47,51 @@ class AppFixtures extends Fixture
             ['username' => 'irene_k', 'genre' => 'Femme', 'nom' => 'King', 'prenom' => 'Irene', 'email' => 'irene.king@test.com', 'motDePasse' => 'password9', 'dateNaissance' => new \DateTime('1994-03-22'), 'createdAt' => new \DateTimeImmutable(), 'isVerified' => true, 'profilPicture' => 'path/to/irene.jpg', 'billingAdress' => '1600 Pennsylvania Ave, Washington DC'],
             ['username' => 'jack_c', 'genre' => 'Homme', 'nom' => 'Clark', 'prenom' => 'Jack', 'email' => 'jack.clark@test.com', 'motDePasse' => 'password10', 'dateNaissance' => new \DateTime('1989-06-15'), 'createdAt' => new \DateTimeImmutable(), 'isVerified' => true, 'profilPicture' => 'path/to/jack.jpg', 'billingAdress' => '4 Privet Drive, Little Whinging'],
         ];
+
+
         foreach ($usersData as $data) {
-            $utilisateur = (new Utilisateur())
-                ->setUsername($data['username'])
+            $utilisateur = new Utilisateur();
+            $hashedPassword = $this->passwordHasher->hashPassword($utilisateur, $data['motDePasse']);
+            $utilisateur->setUsername($data['username'])
                 ->setGenre($data['genre'])
                 ->setNom($data['nom'])
                 ->setPrenom($data['prenom'])
                 ->setEmail($data['email'])
-                ->setMotDePasse($data['motDePasse'])
+                ->setMotDePasse($hashedPassword)
                 ->setDateNaissance($data['dateNaissance'])
                 ->setCreatedAt($data['createdAt'])
                 ->setIsVerified($data['isVerified'])
                 ->setProfilPicture($data['profilPicture'])
                 ->setBillingAdress($data['billingAdress']);
-
             $manager->persist($utilisateur);
+
+            $adminData = [
+
+                ['username' => 'admin', 'genre' => 'Homme', 'nom' => 'Admin', 'prenom' => 'Principal', 'email' => 'admin@example.com', 'motDePasse' => 'password', 'dateNaissance' => new \DateTime('1980-01-01'), 'createdAt' => new \DateTimeImmutable(), 'isVerified' => true, 'profilPicture' => 'path/to/admin.jpg', 'billingAdress' => '1 Rue de l\'Admin, AdminVille', 'roles' => ['ROLE_ADMIN']],
+
+            ];
+
+            //ADMIN
+
+            foreach ($adminData as $data) {
+                $admin = new Utilisateur();
+                $hashedPassword = $this->passwordHasher->hashPassword($admin, $data['motDePasse']);
+
+                $admin->setUsername($data['username'])
+                    ->setGenre($data['genre'])
+                    ->setNom($data['nom'])
+                    ->setPrenom($data['prenom'])
+                    ->setEmail($data['email'])
+                    ->setMotDePasse($hashedPassword)
+                    ->setDateNaissance($data['dateNaissance'])
+                    ->setCreatedAt($data['createdAt'])
+                    ->setIsVerified($data['isVerified'])
+                    ->setProfilPicture($data['profilPicture'])
+                    ->setBillingAdress($data['billingAdress'])
+                    ->setRoles($data['roles']);
+
+                $manager->persist($admin);
+            }
         }
 
         // LOGEMENT

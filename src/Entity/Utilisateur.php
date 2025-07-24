@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
 use App\Repository\UtilisateurRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -10,6 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
@@ -23,10 +26,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Post(
             denormalizationContext: ['groups' => ['user:write']],
             normalizationContext: ['groups' => ['user:read']],
+        ),
+        new Patch(
+            denormalizationContext: ['groups' => ['user:patch']],
+            normalizationContext: ['groups' => ['user:read']],
         )
+
     ]
 )]
-class Utilisateur
+class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -34,39 +42,112 @@ class Utilisateur
     #[Groups(['user:read'])]
     private ?int $id = null;
 
+    /**
+     * @var list<string> The user roles
+     */
+    #[ORM\Column]
+    #[Groups(['user:read'])]
+    private array $roles = [];
+
+    /**
+     * @var string The hashed password
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    /**
+     * @param list<string> $roles
+     */
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * @see PasswordAuthenticatedUserInterface
+     */
+
+    /**
+     * Returns the identifier for this user (username or email).
+     *
+     * @return string
+     */
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->username;
+    }
+
+    /**
+     * Returns the hashed password.
+     *
+     * @return string|null
+     */
+    public function getPassword(): ?string
+    {
+        return $this->motDePasse;
+    }
+
+    /**
+     * Removes sensitive data from the user.
+     *
+     * @return void
+     */
+    public function eraseCredentials(): void
+    {
+        // If I store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
+
     #[ORM\Column(length: 255, unique: true)]
-    #[Groups(['user:read', 'user:write'])]
+    #[Groups(['user:read', 'user:write', 'user:patch'])]
     private ?string $username = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user:read', 'user:write', 'user:patch'])]
     private ?string $genre = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user:read', 'user:write', 'user:patch'])]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user:read', 'user:write', 'user:patch'])]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 255, unique: true)]
+    #[Groups(['user:read', 'user:write', 'user:patch'])]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:write'])]
+    #[Groups(['user:write',])]
     private ?string $motDePasse = null;
 
     #[ORM\Column]
+    #[Groups(['user:read', 'user:write', 'user:patch'])]
     private ?\DateTime $dateNaissance = null;
 
     #[ORM\Column]
+    #[Groups(['user:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    private ?bool $isVerified = null;
+    #[Groups(['user:read'])]
+    private ?bool $isVerified = false;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['user:read', 'user:write', 'user:patch'])]
     private ?string $profilPicture = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['user:read', 'user:write', 'user:patch'])]
     private ?string $billingAdress = null;
 
     /**
@@ -113,6 +194,7 @@ class Utilisateur
         $this->messages = new ArrayCollection();
         $this->messagesend = new ArrayCollection();
         $this->reservations = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
