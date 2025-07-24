@@ -39,6 +39,9 @@ class Reservation
     #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'commentaire_reservation')]
     private Collection $commentaires;
 
+    #[ORM\ManyToOne(inversedBy: 'reservations')]
+    private ?Utilisateur $reservation_utilisateur = null;
+
     public function __construct()
     {
         $this->commentaires = new ArrayCollection();
@@ -147,6 +150,18 @@ class Reservation
                 $commentaire->setCommentaireReservation(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getReservationUtilisateur(): ?Utilisateur
+    {
+        return $this->reservation_utilisateur;
+    }
+
+    public function setReservationUtilisateur(?Utilisateur $reservation_utilisateur): static
+    {
+        $this->reservation_utilisateur = $reservation_utilisateur;
 
         return $this;
     }

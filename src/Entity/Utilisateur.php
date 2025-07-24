@@ -98,6 +98,12 @@ class Utilisateur
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'message_sender')]
     private Collection $messagesend;
 
+    /**
+     * @var Collection<int, Reservation>
+     */
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'reservation_utilisateur')]
+    private Collection $reservations;
+
     public function __construct()
     {
         $this->annonces = new ArrayCollection();
@@ -105,6 +111,7 @@ class Utilisateur
         $this->commentaires = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->messagesend = new ArrayCollection();
+        $this->reservations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -388,6 +395,36 @@ class Utilisateur
             // set the owning side to null (unless already changed)
             if ($messagesend->getMessageSender() === $this) {
                 $messagesend->setMessageSender(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Reservation>
+     */
+    public function getReservations(): Collection
+    {
+        return $this->reservations;
+    }
+
+    public function addReservation(Reservation $reservation): static
+    {
+        if (!$this->reservations->contains($reservation)) {
+            $this->reservations->add($reservation);
+            $reservation->setReservationUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReservation(Reservation $reservation): static
+    {
+        if ($this->reservations->removeElement($reservation)) {
+            // set the owning side to null (unless already changed)
+            if ($reservation->getReservationUtilisateur() === $this) {
+                $reservation->setReservationUtilisateur(null);
             }
         }
 
