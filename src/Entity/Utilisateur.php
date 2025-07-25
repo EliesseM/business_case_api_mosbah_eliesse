@@ -21,7 +21,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new GetCollection(
             name: 'user',
             uriTemplate: '/user',
-            normalizationContext: ['groups' => ['user:read']],
+            normalizationContext: ['groups' => ['user:read', 'reservation:read']],
         ),
         new Post(
             denormalizationContext: ['groups' => ['user:write']],
@@ -107,7 +107,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Groups(['user:read', 'user:write', 'user:patch'])]
+    #[Groups(['user:read', 'user:write', 'user:patch', 'reservation:read'])]
     private ?string $username = null;
 
     #[ORM\Column(length: 255)]
@@ -119,7 +119,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:read', 'user:write', 'user:patch'])]
+    #[Groups(['user:read', 'user:write', 'user:patch', 'reservation:read'])]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 255, unique: true)]

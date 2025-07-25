@@ -2,45 +2,74 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Repository\ReservationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            name: 'reservations',
+            uriTemplate: '/reservations',
+            normalizationContext: ['groups' => ['reservation:read']],
+        ),
+        new Post(
+            denormalizationContext: ['groups' => ['reservation:write']],
+            normalizationContext: ['groups' => ['reservation:read']],
+        ),
+        new Patch(
+            denormalizationContext: ['groups' => ['reservation:patch']],
+            normalizationContext: ['groups' => ['reservation:read']],
+        )
+
+    ]
+)]
 class Reservation
 {
+    #[Groups(['reservation:read'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['reservation:read'])]
     #[ORM\Column]
     private ?\DateTime $dateDebut = null;
 
+    #[Groups(['reservation:read'])]
     #[ORM\Column]
     private ?\DateTime $dateFin = null;
 
+    #[Groups(['reservation:read'])]
     #[ORM\Column(length: 255)]
     private ?string $status = null;
 
+    #[Groups(['reservation:read'])]
     #[ORM\Column]
     private ?float $prixTotal = null;
 
+    #[Groups(['reservation:read'])]
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[Groups(['reservation:read'])]
     #[ORM\ManyToOne(inversedBy: 'reservations')]
     private ?Annonce $reservation_annonce = null;
 
-    /**
-     * @var Collection<int, Commentaire>
-     */
-    #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'commentaire_reservation')]
-    private Collection $commentaires;
-
+    #[Groups(['reservation:read'])]
     #[ORM\ManyToOne(inversedBy: 'reservations')]
     private ?Utilisateur $reservation_utilisateur = null;
+
+    // Pas besoin d'exposer les commentaires ici sauf si tu veux
+    #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'commentaire_reservation')]
+    private Collection $commentaires;
 
     public function __construct()
     {

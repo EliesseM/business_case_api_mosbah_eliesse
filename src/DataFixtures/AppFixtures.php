@@ -35,7 +35,7 @@ class AppFixtures extends Fixture
 
         //ADMIN
 
-        $adminData = json_decode(file_get_contents(__DIR__ . '/admin.json'), true);
+        $adminData = json_decode(file_get_contents(__DIR__ . '/data/admin.json'), true);
 
 
         $admins = [];
@@ -50,8 +50,8 @@ class AppFixtures extends Fixture
                 ->setPrenom($data['prenom'])
                 ->setEmail($data['email'])
                 ->setMotDePasse($hashedPassword)
-                ->setDateNaissance($data['dateNaissance'])
-                ->setCreatedAt($data['createdAt'])
+                ->setDateNaissance(new \DateTime($data['dateNaissance']))
+                ->setCreatedAt(new \DateTimeImmutable($data['createdAt']))
                 ->setIsVerified($data['isVerified'])
                 ->setProfilPicture($data['profilPicture'])
                 ->setBillingAdress($data['billingAdress'])
@@ -63,7 +63,7 @@ class AppFixtures extends Fixture
 
         // PROPRIETAIRE
 
-        $proprietaireData = json_decode(file_get_contents(__DIR__ . '/proprietaire.json'), true);
+        $proprietaireData = json_decode(file_get_contents(__DIR__ . '/data/proprietaire.json'), true);
 
 
 
@@ -79,7 +79,7 @@ class AppFixtures extends Fixture
                 ->setPrenom($data['prenom'])
                 ->setEmail($data['email'])
                 ->setMotDePasse($hashedPassword)
-                ->setDateNaissance(($data['dateNaissance']))
+                ->setDateNaissance(new \DateTime($data['dateNaissance']))
                 ->setCreatedAt(new \DateTimeImmutable($data['createdAt']))
                 ->setIsVerified($data['isVerified'])
                 ->setProfilPicture($data['profilPicture'])
@@ -93,7 +93,7 @@ class AppFixtures extends Fixture
 
         // UTILISATEURS
 
-        $usersData = json_decode(file_get_contents(__DIR__ . '/user.json'), true);
+        $usersData = json_decode(file_get_contents(__DIR__ . '/data/user.json'), true);
 
 
         $utilisateurs = [];
@@ -107,8 +107,8 @@ class AppFixtures extends Fixture
                 ->setPrenom($data['prenom'])
                 ->setEmail($data['email'])
                 ->setMotDePasse($hashedPassword)
-                ->setDateNaissance($data['dateNaissance'])
-                ->setCreatedAt($data['createdAt'])
+                ->setDateNaissance(new \DateTime($data['dateNaissance']))
+                ->setCreatedAt(new \DateTimeImmutable($data['createdAt']))
                 ->setIsVerified($data['isVerified'])
                 ->setProfilPicture($data['profilPicture'])
                 ->setBillingAdress($data['billingAdress'])
@@ -120,7 +120,7 @@ class AppFixtures extends Fixture
 
         // LOGEMENT
 
-        $logementsData = json_decode(file_get_contents(__DIR__ . '/logement.json'), true);
+        $logementsData = json_decode(file_get_contents(__DIR__ . '/data/logements.json'), true);
 
         $logements = [];
 
@@ -146,7 +146,7 @@ class AppFixtures extends Fixture
 
         // SERVICE
 
-        $serviceData = json_decode(file_get_contents(__DIR__ . '/service.json'), true);;
+        $serviceData = json_decode(file_get_contents(__DIR__ . '/data/service.json'), true);;
 
         $services = [];
 
@@ -160,7 +160,7 @@ class AppFixtures extends Fixture
 
         // ANNONCE
 
-        $annoncesData = json_decode(file_get_contents(__DIR__ . '/annonces.json'), true);
+        $annoncesData = json_decode(file_get_contents(__DIR__ . '/data/annonce.json'), true);
 
 
         $annonces = [];
@@ -185,27 +185,29 @@ class AppFixtures extends Fixture
 
         // RESERVATION
 
-        $reservationData = json_decode(file_get_contents(__DIR__ . '/reservation.json'), true);
+        $reservationData = json_decode(file_get_contents(__DIR__ . '/data/reservation.json'), true);
 
 
         $reservations = [];
 
-        foreach ($reservationData as $data) {
+        foreach ($utilisateurs as $i => $utilisateur) {
+            $data = $reservationData[$i % count($reservationData)];
             $reservation = (new Reservation())
-                ->setDateDebut($data['dateDebut'])
-                ->setDateFin($data['dateFin'])
+                ->setDateDebut(new \Datetime($data['dateDebut']))
+                ->setDateFin(new \DateTime($data['dateFin']))
                 ->setStatus($data['status'])
                 ->setPrixTotal($data['prixTotal'])
-                ->setCreatedAt($data['createdAt'])
+                ->setCreatedAt(new \DateTimeImmutable($data['createdAt']))
                 ->setReservationUtilisateur($utilisateur)
-                ->setReservationAnnonce($annonce);
+                ->setReservationAnnonce($annonces[$i % count($annonces)]);
             $manager->persist($reservation);
             $reservations[] = $reservation; // Store the reservation for later use in other entities
+
         }
 
         //COMMENTAIRE
 
-        $commentaireData = json_decode(file_get_contents(__DIR__ . '/commentaire.json'), true);
+        $commentaireData = json_decode(file_get_contents(__DIR__ . '/data/commentaire.json'), true);
 
 
         $commentaires = [];
@@ -214,7 +216,7 @@ class AppFixtures extends Fixture
             $commentaire = (new Commentaire())
                 ->setCommentaire($data['commentaire'])
                 ->setNote($data['note'])
-                ->setDatePublication($data['datePublication'])
+                ->setDatePublication(new \DateTime($data['datePublication']))
                 ->setCommentaireUtilisateur($utilisateur)
                 ->setCommentaireReservation($reservation);
             $manager->persist($commentaire);
@@ -223,7 +225,7 @@ class AppFixtures extends Fixture
 
         //EQUIPEMENTS
 
-        $equipementsData = json_decode(file_get_contents(__DIR__ . '/equipement.json'), true);
+        $equipementsData = json_decode(file_get_contents(__DIR__ . '/data/equipement.json'), true);
 
 
         $equipements = [];
@@ -238,7 +240,7 @@ class AppFixtures extends Fixture
         }
         // IMAGE
 
-        $imageData = json_decode(file_get_contents(__DIR__ . '/equipement.json'), true);
+        $imageData = json_decode(file_get_contents(__DIR__ . '/data/image.json'), true);
 
         $images = [];
 
@@ -252,15 +254,15 @@ class AppFixtures extends Fixture
 
         // INDISPONIBILITE
 
-        $indisponibiliteData = json_decode(file_get_contents(__DIR__ . '/indisponibilite.json'), true);
+        $indisponibiliteData = json_decode(file_get_contents(__DIR__ . '/data/indisponibilite.json'), true);
 
 
         $indisponibilities = [];
 
         foreach ($indisponibiliteData as $data) {
             $indisponibilite = (new Indisponibilite())
-                ->setDateDebut($data['dateDebut'])
-                ->setDateFin($data['dateFin'])
+                ->setDateDebut(new \Datetime($data['dateDebut']))
+                ->setDateFin(new \DateTime($data['dateFin']))
                 ->setDescription($data['description'])
                 ->setAnnonceIndisponibilite($annonce);
             $manager->persist($indisponibilite);
@@ -268,14 +270,14 @@ class AppFixtures extends Fixture
         }
 
         // MESSAGE
-        $messageData = json_decode(file_get_contents(__DIR__ . '/message.json'), true);
+        $messageData = json_decode(file_get_contents(__DIR__ . '/data/message.json'), true);
 
         $messages = [];
 
         foreach ($messageData as $data) {
             $message = (new Message())
                 ->setContenu($data['contenu'])
-                ->setCreatedAt($data['createdAt'])
+                ->setCreatedAt(new \DateTimeImmutable($data['createdAt']))
                 ->setMessageReceiver($utilisateur)
                 ->setMessageSender($utilisateur);
             $manager->persist($message);
