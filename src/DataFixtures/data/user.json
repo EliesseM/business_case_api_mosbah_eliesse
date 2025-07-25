@@ -1,0 +1,149 @@
+
+[
+
+
+ {
+    "username": "john_doe",
+    "genre": "Homme",
+    "nom": "Doe",
+    "prenom": "John",
+    "email": "john@test.com",
+    "motDePasse": "password",
+    "dateNaissance": "1993-01-01",
+    "createdAt": "2024-07-24T00:00:00Z",
+    "isVerified": true,
+    "profilPicture": "path/to/profile/picture.jpg",
+    "billingAdress": "123 Main St, City, Country"
+  },
+  {
+    "username": "alice_w",
+    "genre": "Femme",
+    "nom": "Williams",
+    "prenom": "Alice",
+    "email": "alice.williams@test.com",
+    "motDePasse": "password1",
+    "dateNaissance": "1990-05-12",
+    "createdAt": "2024-07-24T00:00:00Z",
+    "isVerified": true,
+    "profilPicture": "path/to/alice.jpg",
+    "billingAdress": "10 Downing St, London, UK"
+  },
+  {
+    "username": "bob_s",
+    "genre": "Homme",
+    "nom": "Smith",
+    "prenom": "Bob",
+    "email": "bob.smith@test.com",
+    "motDePasse": "password2",
+    "dateNaissance": "1985-08-23",
+    "createdAt": "2024-07-24T00:00:00Z",
+    "isVerified": false,
+    "profilPicture": "path/to/bob.jpg",
+    "billingAdress": "221B Baker St, London, UK"
+  },
+  {
+    "username": "carol_j",
+    "genre": "Femme",
+    "nom": "Jones",
+    "prenom": "Carol",
+    "email": "carol.jones@test.com",
+    "motDePasse": "password3",
+    "dateNaissance": "1992-11-01",
+    "createdAt": "2024-07-24T00:00:00Z",
+    "isVerified": true,
+    "profilPicture": "path/to/carol.jpg",
+    "billingAdress": "742 Evergreen Terrace, Springfield"
+  },
+  {
+    "username": "dave_m",
+    "genre": "Homme",
+    "nom": "Miller",
+    "prenom": "Dave",
+    "email": "dave.miller@test.com",
+    "motDePasse": "password4",
+    "dateNaissance": "1988-02-14",
+    "createdAt": "2024-07-24T00:00:00Z",
+    "isVerified": true,
+    "profilPicture": "path/to/dave.jpg",
+    "billingAdress": "1600 Pennsylvania Ave, Washington DC"
+  },
+  {
+    "username": "eve_b",
+    "genre": "Femme",
+    "nom": "Brown",
+    "prenom": "Eve",
+    "email": "eve.brown@test.com",
+    "motDePasse": "password5",
+    "dateNaissance": "1995-07-30",
+    "createdAt": "2024-07-24T00:00:00Z",
+    "isVerified": false,
+    "profilPicture": "path/to/eve.jpg",
+    "billingAdress": "221B Baker St, London, UK"
+  },
+  {
+    "username": "frank_t",
+    "genre": "Homme",
+    "nom": "Taylor",
+    "prenom": "Frank",
+    "email": "frank.taylor@test.com",
+    "motDePasse": "password6",
+    "dateNaissance": "1983-09-09",
+    "createdAt": "2024-07-24T00:00:00Z",
+    "isVerified": true,
+    "profilPicture": "path/to/frank.jpg",
+    "billingAdress": "4 Privet Drive, Little Whinging"
+  },
+  {
+    "username": "grace_l",
+    "genre": "Femme",
+    "nom": "Lee",
+    "prenom": "Grace",
+    "email": "grace.lee@test.com",
+    "motDePasse": "password7",
+    "dateNaissance": "1991-12-12",
+    "createdAt": "2024-07-24T00:00:00Z",
+    "isVerified": true,
+    "profilPicture": "path/to/grace.jpg",
+    "billingAdress": "10 Downing St, London, UK"
+  },
+  {
+    "username": "henry_w",
+    "genre": "Homme",
+    "nom": "White",
+    "prenom": "Henry",
+    "email": "henry.white@test.com",
+    "motDePasse": "password8",
+    "dateNaissance": "1986-04-04",
+    "createdAt": "2024-07-24T00:00:00Z",
+    "isVerified": false,
+    "profilPicture": "path/to/henry.jpg",
+    "billingAdress": "742 Evergreen Terrace, Springfield"
+  },
+  {
+    "username": "irene_k",
+    "genre": "Femme",
+    "nom": "King",
+    "prenom": "Irene",
+    "email": "irene.king@test.com",
+    "motDePasse": "password9",
+    "dateNaissance": "1994-03-22",
+    "createdAt": "2024-07-24T00:00:00Z",
+    "isVerified": true,
+    "profilPicture": "path/to/irene.jpg",
+    "billingAdress": "1600 Pennsylvania Ave, Washington DC"
+  },
+  {
+    "username": "jack_c",
+    "genre": "Homme",
+    "nom": "Clark",
+    "prenom": "Jack",
+    "email": "jack.clark@test.com",
+    "motDePasse": "password10",
+    "dateNaissance": "1989-06-15",
+    "createdAt": "2024-07-24T00:00:00Z",
+    "isVerified": true,
+    "profilPicture": "path/to/jack.jpg",
+    "billingAdress": "4 Privet Drive, Little Whinging"
+  }
+
+]

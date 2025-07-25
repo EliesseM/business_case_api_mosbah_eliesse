@@ -1,0 +1,9 @@
+[
+  {
+    "titre": "Annonce Title",
+    "description": "This is a description of the annonce.",
+    "prixJournee": 100.0,
+    "nbPlaces": 4,
+    "mixte": true
+  }
+]

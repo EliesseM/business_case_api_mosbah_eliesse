@@ -1,0 +1,14 @@
+[
+  {
+    "nom": "Wifi",
+    "description": "Connexion internet haut débit gratuite."
+  },
+  {
+    "nom": "Parking",
+    "description": "Place de parking sécurisée disponible."
+  },
+  {
+    "nom": "Petit-déjeuner",
+    "description": "Petit-déjeuner inclus chaque matin."
+  }
+]

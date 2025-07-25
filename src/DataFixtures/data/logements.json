@@ -1,0 +1,15 @@
+[
+    {
+    "nomRue": "Logement Title",
+    "numeroRue": "This is a description of the logement.",
+    "complementAdresse1": "456 Another St, City, Country",
+    "complementAdresse2": "Apt 789",
+    "ville": "City Name",
+    "codePostal": "12345",
+    "pays": "Country Name",
+    "latitude": 12.345678,
+    "longitude": 98.765432,
+    "superficie": 100
+  }
+  
+]
