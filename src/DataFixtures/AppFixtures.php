@@ -32,6 +32,68 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
 
+
+        //ADMIN
+
+        $adminData = [
+            ['username' => 'admin', 'genre' => 'Homme', 'nom' => 'Admin', 'prenom' => 'Principal', 'email' => 'admin@example.com', 'motDePasse' => 'password', 'dateNaissance' => new \DateTime('1980-01-01'), 'createdAt' => new \DateTimeImmutable(), 'isVerified' => true, 'profilPicture' => 'path/to/admin.jpg', 'billingAdress' => '1 Rue de l\'Admin, AdminVille']
+        ];
+
+        $admins = [];
+
+        foreach ($adminData as $data) {
+            $admin = new Utilisateur();
+            $hashedPassword = $this->passwordHasher->hashPassword($admin, $data['motDePasse']);
+
+            $admin->setUsername($data['username'])
+                ->setGenre($data['genre'])
+                ->setNom($data['nom'])
+                ->setPrenom($data['prenom'])
+                ->setEmail($data['email'])
+                ->setMotDePasse($hashedPassword)
+                ->setDateNaissance($data['dateNaissance'])
+                ->setCreatedAt($data['createdAt'])
+                ->setIsVerified($data['isVerified'])
+                ->setProfilPicture($data['profilPicture'])
+                ->setBillingAdress($data['billingAdress'])
+                ->setRoles(['ROLE_ADMIN']); // Set admin role
+            $manager->persist($admin);
+            $admins[] = $admin; // Store the admin for later use in other entities
+        }
+
+
+        // PROPRIETAIRE
+
+
+        $proprietaireData = [
+            ['username' => 'admin', 'genre' => 'Homme', 'nom' => 'Admin', 'prenom' => 'Principal', 'email' => 'admin@example.com', 'motDePasse' => 'password', 'dateNaissance' => new \DateTime('1980-01-01'), 'createdAt' => new \DateTimeImmutable(), 'isVerified' => true, 'profilPicture' => 'path/to/admin.jpg', 'billingAdress' => '1 Rue de l\'Admin, AdminVille', 'roles' => ['ROLE_ADMIN']],
+        ];
+
+
+        $proprietaires = [];
+
+        foreach ($proprietaireData as $data) {
+            $proprietaire = new Utilisateur();
+            $hashedPassword = $this->passwordHasher->hashPassword($proprietaire, $data['motDePasse']);
+
+            $proprietaire->setUsername($data['username'])
+                ->setGenre($data['genre'])
+                ->setNom($data['nom'])
+                ->setPrenom($data['prenom'])
+                ->setEmail($data['email'])
+                ->setMotDePasse($hashedPassword)
+                ->setDateNaissance($data['dateNaissance'])
+                ->setCreatedAt($data['createdAt'])
+                ->setIsVerified($data['isVerified'])
+                ->setProfilPicture($data['profilPicture'])
+                ->setBillingAdress($data['billingAdress'])
+                ->setRoles(['ROLE_PROPRIETAIRE']);
+
+
+            $manager->persist($proprietaire);
+            $proprietaires[] = $proprietaire; // Store the proprietaire for later use in other entities
+        }
+
         // UTILISATEURS
 
         $usersData = [
@@ -48,6 +110,7 @@ class AppFixtures extends Fixture
             ['username' => 'jack_c', 'genre' => 'Homme', 'nom' => 'Clark', 'prenom' => 'Jack', 'email' => 'jack.clark@test.com', 'motDePasse' => 'password10', 'dateNaissance' => new \DateTime('1989-06-15'), 'createdAt' => new \DateTimeImmutable(), 'isVerified' => true, 'profilPicture' => 'path/to/jack.jpg', 'billingAdress' => '4 Privet Drive, Little Whinging'],
         ];
 
+        $utilisateurs = [];
 
         foreach ($usersData as $data) {
             $utilisateur = new Utilisateur();
@@ -62,36 +125,11 @@ class AppFixtures extends Fixture
                 ->setCreatedAt($data['createdAt'])
                 ->setIsVerified($data['isVerified'])
                 ->setProfilPicture($data['profilPicture'])
-                ->setBillingAdress($data['billingAdress']);
+                ->setBillingAdress($data['billingAdress'])
+                ->setRoles(['ROLE_USER']); // Default role for all users
+
             $manager->persist($utilisateur);
-
-            $adminData = [
-
-                ['username' => 'admin', 'genre' => 'Homme', 'nom' => 'Admin', 'prenom' => 'Principal', 'email' => 'admin@example.com', 'motDePasse' => 'password', 'dateNaissance' => new \DateTime('1980-01-01'), 'createdAt' => new \DateTimeImmutable(), 'isVerified' => true, 'profilPicture' => 'path/to/admin.jpg', 'billingAdress' => '1 Rue de l\'Admin, AdminVille', 'roles' => ['ROLE_ADMIN']],
-
-            ];
-
-            //ADMIN
-
-            foreach ($adminData as $data) {
-                $admin = new Utilisateur();
-                $hashedPassword = $this->passwordHasher->hashPassword($admin, $data['motDePasse']);
-
-                $admin->setUsername($data['username'])
-                    ->setGenre($data['genre'])
-                    ->setNom($data['nom'])
-                    ->setPrenom($data['prenom'])
-                    ->setEmail($data['email'])
-                    ->setMotDePasse($hashedPassword)
-                    ->setDateNaissance($data['dateNaissance'])
-                    ->setCreatedAt($data['createdAt'])
-                    ->setIsVerified($data['isVerified'])
-                    ->setProfilPicture($data['profilPicture'])
-                    ->setBillingAdress($data['billingAdress'])
-                    ->setRoles($data['roles']);
-
-                $manager->persist($admin);
-            }
+            $utilisateurs[] = $utilisateur; // Store the user for later use in other entities
         }
 
         // LOGEMENT
@@ -99,6 +137,9 @@ class AppFixtures extends Fixture
         $logementsData = [
             ['nomRue' => 'Logement Title', 'numeroRue' => 'This is a description of the logement.', 'complementAdresse1' => '456 Another St, City, Country', 'complementAdresse2' => 'Apt 789', 'ville' => 'City Name', 'codePostal' => '12345', 'pays' => 'Country Name', 'latitude' => 12.345678, 'longitude' => 98.765432, 'superficie' => 100]
         ];
+
+        $logements = [];
+
         foreach ($logementsData as $data) {
             $logement = (new Logement())
                 ->setNomRue($data['nomRue'])
@@ -113,30 +154,64 @@ class AppFixtures extends Fixture
                 ->setSuperficie($data['superficie'])
                 ->setLogementUtilisateur($utilisateur);
 
+
+
             $manager->persist($logement);
+            $logements[] = $logement; // Store the logement for later use in other entities
+        }
+
+        // SERVICE
+
+        $serviceData = [
+            ['nom' => 'Service Name', 'description' => 'This is a description of the service.'],
+            ['nom' => 'Service Name', 'description' => 'This is a description of the service.']
+        ];
+
+        $services = [];
+
+        foreach ($serviceData as $data) {
+            $service = (new Service())
+                ->setNom($data['nom'])
+                ->setDescription($data['description']);
+            $manager->persist($service);
+            $services[] = $service; // Store the service for later use in other entities
         }
 
         // ANNONCE
+
         $annoncesData = [
             ['titre' => 'Annonce Title', 'description' => 'This is a description of the annonce.', 'prixJournee' => 100.00, 'nbPlaces' => 4, 'mixte' => true]
         ];
-        foreach ($annoncesData as $data)
+
+        $annonces = [];
+
+        foreach ($annoncesData as $data) {
             $annonce = (new Annonce())
                 ->setTitre($data['titre'])
                 ->setDescription($data['description'])
                 ->setPrixJournee($data['prixJournee'])
                 ->setNbPlaces($data['nbPlaces'])
                 ->setMixte($data['mixte'])
-                ->setAnnonceUtilisateur($utilisateur);
+                ->setAnnonceUtilisateur($utilisateur)
+                ->setAnnonceLogement($logement); // Assuming the annonce is linked to a logement
+            $annonce->addService($services[0]);
+            $annonce->addService($services[1]);
 
-        $manager->persist($annonce);
+
+
+            $manager->persist($annonce);
+            $annonces[] = $annonce; // Store the annonce for later use in other entities
+        }
 
         // RESERVATION
 
         $reservationData = [
             ['dateDebut' => new \DateTime(), 'dateFin' => new \DateTime('+1 day'), 'status' => 'confirmed', 'prixTotal' => 1000.00, 'createdAt' => new \DateTimeImmutable()]
         ];
-        foreach ($reservationData as $data)
+
+        $reservations = [];
+
+        foreach ($reservationData as $data) {
             $reservation = (new Reservation())
                 ->setDateDebut($data['dateDebut'])
                 ->setDateFin($data['dateFin'])
@@ -145,83 +220,96 @@ class AppFixtures extends Fixture
                 ->setCreatedAt($data['createdAt'])
                 ->setReservationUtilisateur($utilisateur)
                 ->setReservationAnnonce($annonce);
-
-        $manager->persist($reservation);
+            $manager->persist($reservation);
+            $reservations[] = $reservation; // Store the reservation for later use in other entities
+        }
 
         //COMMENTAIRE
+
         $commentaireData = [
             ['commentaire' => 'This is a comment.', 'note' => 5, 'datePublication' => new \DateTime()]
         ];
-        foreach ($commentaireData as $data)
+
+        $commentaires = [];
+
+        foreach ($commentaireData as $data) {
             $commentaire = (new Commentaire())
                 ->setCommentaire($data['commentaire'])
                 ->setNote($data['note'])
                 ->setDatePublication($data['datePublication'])
                 ->setCommentaireUtilisateur($utilisateur)
                 ->setCommentaireReservation($reservation);
-
-        $manager->persist($commentaire);
+            $manager->persist($commentaire);
+            $commentaires[] = $commentaire; // Store the commentaire for later use in other entities
+        }
 
         //EQUIPEMENTS
+
         $equipementsData = [
             ['nom' => 'Equipement Name', 'description' => 'This is a description of the equipement.']
         ];
+
+        $equipements = [];
+
         foreach ($equipementsData as $data) {
             $equipement = (new Equipement())
                 ->setNom($data['nom'])
                 ->setDescription($data['description']);
             $equipement->addLogement($logement);
-
             $manager->persist($equipement);
+            $equipements[] = $equipement; // Store the equipement for later use in other entities
         }
-
         // IMAGE
+
         $imageData = [
             ['path' => 'path/to/image.jpg']
         ];
-        foreach ($imageData as $data)
+        $images = [];
+
+        foreach ($imageData as $data) {
             $image = (new Image())
                 ->setPath($data['path'])
                 ->setLogementImage($logement);
-
-        $manager->persist($image);
+            $manager->persist($image);
+            $images[] = $image; // Store the image for later use in other entities
+        }
 
         // INDISPONIBILITE
+
         $indisponibiliteData = [
             ['dateDebut' => new \DateTime(), 'dateFin' => new \DateTime('+1 week'), 'description' => 'Indisponibility description.']
         ];
-        foreach ($indisponibiliteData as $data)
+
+        $indisponibilities = [];
+
+        foreach ($indisponibiliteData as $data) {
             $indisponibilite = (new Indisponibilite())
                 ->setDateDebut($data['dateDebut'])
                 ->setDateFin($data['dateFin'])
                 ->setDescription($data['description'])
                 ->setAnnonceIndisponibilite($annonce);
-
-        $manager->persist($indisponibilite);
+            $manager->persist($indisponibilite);
+            $indisponibilities[] = $indisponibilite; // Store the indisponibilite for later use in other entities
+        }
 
         // MESSAGE
+
         $messageData = [
             ['contenu' => 'This is a message.', 'createdAt' => new \DateTimeImmutable()]
         ];
-        foreach ($messageData as $data)
+
+        $messages = [];
+
+        foreach ($messageData as $data) {
             $message = (new Message())
                 ->setContenu($data['contenu'])
                 ->setCreatedAt($data['createdAt'])
                 ->setMessageReceiver($utilisateur)
                 ->setMessageSender($utilisateur);
+            $manager->persist($message);
+            $messages[] = $message; // Store the message for later use in other entities
+        }
 
-        $manager->persist($message);
-
-        // SERVICE
-        $serviceData = [
-            ['nom' => 'Service Name', 'description' => 'This is a description of the service.']
-        ];
-        foreach ($serviceData as $data)
-            $service = (new Service())
-                ->setNom($data['nom'])
-                ->setDescription($data['description']);
-
-        $manager->persist($service);
 
         $manager->flush();
     }
