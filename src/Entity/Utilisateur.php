@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
@@ -22,9 +23,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
 #[ApiResource(
     operations: [
+        new Get(
+            security: "is_granted('IS_AUTHENTICATED_FULLY')",
+        ),
+
         new GetCollection(
-            name: 'user',
-            uriTemplate: '/user',
             normalizationContext: ['groups' => ['user:read', 'reservation:read']],
         ),
         new Post(
@@ -80,7 +83,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     #[Groups(['user:write'])]
     #[Assert\Length(min: 8, minMessage: "Le mot de passe doit contenir au moins {{ limit }} caractères.")]
-    private ?string $motDePasse = null;
+    private ?string $password = null;
 
     #[ORM\Column(type: 'datetime')]
     #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y'])]
@@ -108,7 +111,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Relations en lecture seule pour éviter les modifications via cette entité.
-     * Ajoute des groupes si tu veux exposer ces collections via l’API.
      */
 
     #[ORM\OneToMany(targetEntity: Annonce::class, mappedBy: 'annonce_utilisateur')]
@@ -223,12 +225,12 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getPassword(): ?string
     {
-        return $this->motDePasse;
+        return $this->password;
     }
 
-    public function setPassword(string $motDePasse): self
+    public function setPassword(string $password): self
     {
-        $this->motDePasse = $motDePasse;
+        $this->password = $password;
         return $this;
     }
 
@@ -245,7 +247,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->createdAt?->format('d-m-Y');
+        return $this->createdAt;
     }
 
     public function setCreatedAt(\DateTimeImmutable $createdAt): self

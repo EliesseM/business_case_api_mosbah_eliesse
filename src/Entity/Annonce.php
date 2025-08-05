@@ -295,7 +295,7 @@ class Annonce
     #[Groups(['read', 'user:read', 'annonce:read'])] // adapte les groupes selon ton API
     public function getCreatedAtFormatted(): ?string
     {
-        return $this->createdAt?->format('Y-m-d H:i:s');
+        return $this->createdAt;
     }
 
     public function setCreatedAt(\DateTime $createdAt): static
