@@ -11,6 +11,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
 #[ApiResource(
@@ -28,7 +29,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
             denormalizationContext: ['groups' => ['reservation:patch']],
             normalizationContext: ['groups' => ['reservation:read']],
         )
-
     ]
 )]
 class Reservation
@@ -39,31 +39,31 @@ class Reservation
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['reservation:read'])]
-    #[ORM\Column]
+    #[Groups(['reservation:read', 'reservation:write'])]
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $dateDebut = null;
 
-    #[Groups(['reservation:read'])]
-    #[ORM\Column]
+    #[Groups(['reservation:read', 'reservation:write'])]
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $dateFin = null;
 
-    #[Groups(['reservation:read'])]
+    #[Groups(['reservation:read', 'reservation:write'])]
     #[ORM\Column(length: 255)]
     private ?string $status = null;
 
-    #[Groups(['reservation:read'])]
+    #[Groups(['reservation:read', 'reservation:write'])]
     #[ORM\Column]
     private ?float $prixTotal = null;
 
     #[Groups(['reservation:read'])]
-    #[ORM\Column]
+    #[ORM\Column(type: 'datetime_immutable')]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[Groups(['reservation:read'])]
+    #[Groups(['reservation:read', 'reservation:write'])]
     #[ORM\ManyToOne(inversedBy: 'reservations')]
     private ?Annonce $reservation_annonce = null;
 
-    #[Groups(['reservation:read'])]
+    #[Groups(['reservation:read', 'reservation:write'])]
     #[ORM\ManyToOne(inversedBy: 'reservations')]
     private ?Utilisateur $reservation_utilisateur = null;
 
@@ -74,6 +74,7 @@ class Reservation
     public function __construct()
     {
         $this->commentaires = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int

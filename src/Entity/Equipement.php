@@ -3,29 +3,45 @@
 namespace App\Entity;
 
 use App\Repository\EquipementRepository;
+use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+
+
 #[ORM\Entity(repositoryClass: EquipementRepository::class)]
+#[ApiResource(
+    normalizationContext: ['groups' => ['equipement:list']],
+    denormalizationContext: ['groups' => ['equipement:write']],
+    operations: [
+        new \ApiPlatform\Metadata\Get(normalizationContext: ['groups' => ['equipement:read']]),
+        new \ApiPlatform\Metadata\GetCollection(),
+        new \ApiPlatform\Metadata\Post(),
+        new \ApiPlatform\Metadata\Put(),
+        new \ApiPlatform\Metadata\Delete(),
+    ]
+)]
 class Equipement
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['equipement:list', 'equipement:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['equipement:list', 'equipement:read', 'equipement:write'])]
     private ?string $nom = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['equipement:read', 'equipement:write'])]
     private ?string $description = null;
 
-    /**
-     * @var Collection<int, Logement>
-     */
     #[ORM\ManyToMany(targetEntity: Logement::class, mappedBy: 'equipements')]
+    #[Groups(['equipement:read'])]
     private Collection $logements;
 
     public function __construct()
@@ -46,7 +62,6 @@ class Equipement
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
-
         return $this;
     }
 
@@ -58,7 +73,6 @@ class Equipement
     public function setDescription(string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
@@ -76,7 +90,6 @@ class Equipement
             $this->logements->add($logement);
             $logement->addEquipement($this);
         }
-
         return $this;
     }
 
@@ -85,7 +98,6 @@ class Equipement
         if ($this->logements->removeElement($logement)) {
             $logement->removeEquipement($this);
         }
-
         return $this;
     }
 }

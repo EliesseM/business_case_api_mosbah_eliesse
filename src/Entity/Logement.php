@@ -3,67 +3,91 @@
 namespace App\Entity;
 
 use App\Repository\LogementRepository;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: LogementRepository::class)]
+#[ApiResource(
+    normalizationContext: ['groups' => ['logement:list']],
+    denormalizationContext: ['groups' => ['logement:write']],
+    operations: [
+        new Get(normalizationContext: ['groups' => ['logement:read']]),
+        new GetCollection(),
+        new Post(),
+        new Put(),
+        new Delete()
+    ]
+)]
 class Logement
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['logement:list', 'logement:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['logement:list', 'logement:read', 'logement:write'])]
     private ?string $numeroRue = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['logement:list', 'logement:read', 'logement:write'])]
     private ?string $nomRue = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['logement:read', 'logement:write'])]
     private ?string $complementAdresse1 = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['logement:read', 'logement:write'])]
     private ?string $complementAdresse2 = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['logement:list', 'logement:read', 'logement:write'])]
     private ?string $ville = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['logement:list', 'logement:read', 'logement:write'])]
     private ?string $codePostal = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['logement:list', 'logement:read', 'logement:write'])]
     private ?string $pays = null;
 
     #[ORM\Column]
+    #[Groups(['logement:read', 'logement:write'])]
     private ?float $longitude = null;
 
     #[ORM\Column]
+    #[Groups(['logement:read', 'logement:write'])]
     private ?float $latitude = null;
 
     #[ORM\Column]
+    #[Groups(['logement:list', 'logement:read', 'logement:write'])]
     private ?float $superficie = null;
 
-    /**
-     * @var Collection<int, Equipement>
-     */
     #[ORM\ManyToMany(targetEntity: Equipement::class, inversedBy: 'logements')]
+    #[Groups(['logement:read', 'logement:write'])]
     private Collection $equipements;
 
-    /**
-     * @var Collection<int, Image>
-     */
-    #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'logement_image')]
+    #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'logement_image', cascade: ['persist'], orphanRemoval: true)]
+    #[Groups(['logement:read', 'logement:write'])]
     private Collection $images;
 
-    /**
-     * @var Collection<int, Annonce>
-     */
-    #[ORM\OneToMany(targetEntity: Annonce::class, mappedBy: 'annonce_logement')]
+    #[ORM\OneToMany(targetEntity: Annonce::class, mappedBy: 'annonce_logement', cascade: ['persist'], orphanRemoval: true)]
+    #[Groups(['logement:read', 'logement:write'])]
     private Collection $annonces;
 
     #[ORM\ManyToOne(inversedBy: 'logements')]
+    #[Groups(['logement:read', 'logement:write'])]
     private ?Utilisateur $logement_utilisateur = null;
 
     public function __construct()
@@ -86,7 +110,6 @@ class Logement
     public function setNumeroRue(string $numeroRue): static
     {
         $this->numeroRue = $numeroRue;
-
         return $this;
     }
 
@@ -98,7 +121,6 @@ class Logement
     public function setNomRue(string $nomRue): static
     {
         $this->nomRue = $nomRue;
-
         return $this;
     }
 
@@ -110,7 +132,6 @@ class Logement
     public function setComplementAdresse1(?string $complementAdresse1): static
     {
         $this->complementAdresse1 = $complementAdresse1;
-
         return $this;
     }
 
@@ -122,7 +143,6 @@ class Logement
     public function setComplementAdresse2(?string $complementAdresse2): static
     {
         $this->complementAdresse2 = $complementAdresse2;
-
         return $this;
     }
 
@@ -134,7 +154,6 @@ class Logement
     public function setVille(string $ville): static
     {
         $this->ville = $ville;
-
         return $this;
     }
 
@@ -146,7 +165,6 @@ class Logement
     public function setCodePostal(string $codePostal): static
     {
         $this->codePostal = $codePostal;
-
         return $this;
     }
 
@@ -158,7 +176,6 @@ class Logement
     public function setPays(string $pays): static
     {
         $this->pays = $pays;
-
         return $this;
     }
 
@@ -170,7 +187,6 @@ class Logement
     public function setLongitude(float $longitude): static
     {
         $this->longitude = $longitude;
-
         return $this;
     }
 
@@ -182,7 +198,6 @@ class Logement
     public function setLatitude(float $latitude): static
     {
         $this->latitude = $latitude;
-
         return $this;
     }
 
@@ -194,13 +209,9 @@ class Logement
     public function setSuperficie(float $superficie): static
     {
         $this->superficie = $superficie;
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Equipement>
-     */
     public function getEquipements(): Collection
     {
         return $this->equipements;
@@ -211,20 +222,15 @@ class Logement
         if (!$this->equipements->contains($equipement)) {
             $this->equipements->add($equipement);
         }
-
         return $this;
     }
 
     public function removeEquipement(Equipement $equipement): static
     {
         $this->equipements->removeElement($equipement);
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Image>
-     */
     public function getImages(): Collection
     {
         return $this->images;
@@ -236,25 +242,19 @@ class Logement
             $this->images->add($image);
             $image->setLogementImage($this);
         }
-
         return $this;
     }
 
     public function removeImage(Image $image): static
     {
         if ($this->images->removeElement($image)) {
-            // set the owning side to null (unless already changed)
             if ($image->getLogementImage() === $this) {
                 $image->setLogementImage(null);
             }
         }
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Annonce>
-     */
     public function getAnnonces(): Collection
     {
         return $this->annonces;
@@ -266,19 +266,16 @@ class Logement
             $this->annonces->add($annonce);
             $annonce->setAnnonceLogement($this);
         }
-
         return $this;
     }
 
     public function removeAnnonce(Annonce $annonce): static
     {
         if ($this->annonces->removeElement($annonce)) {
-            // set the owning side to null (unless already changed)
             if ($annonce->getAnnonceLogement() === $this) {
                 $annonce->setAnnonceLogement(null);
             }
         }
-
         return $this;
     }
 
@@ -290,7 +287,6 @@ class Logement
     public function setLogementUtilisateur(?Utilisateur $logement_utilisateur): static
     {
         $this->logement_utilisateur = $logement_utilisateur;
-
         return $this;
     }
 }
