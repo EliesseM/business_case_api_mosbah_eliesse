@@ -11,10 +11,16 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
+#[UniqueEntity('email', message: 'cet email est dèja utilisé')]
+#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
 #[ApiResource(
     operations: [
@@ -122,22 +128,32 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read', 'user:write', 'user:patch', 'reservation:read'])]
     private ?string $prenom = null;
 
+    #[Assert\NotBlank(message: "L'email est obligatoire.")]
+    #[Assert\Email(message: "Format d'email invalide.")]
     #[ORM\Column(length: 255, unique: true)]
     #[Groups(['user:read', 'user:write', 'user:patch'])]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Length(
+        min: 8,
+        minMessage: "Le mot de passe doit contenir au moins {{ limit }} caractères."
+    )]
     #[Groups(['user:write',])]
     private ?string $motDePasse = null;
 
     #[ORM\Column]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y'])] // Ajout du format
+    #[Assert\NotNull]
+    #[Assert\LessThan('today', message: "La date de naissance doit être dans le passé.")]
     #[Groups(['user:read', 'user:write', 'user:patch'])]
     private ?\DateTime $dateNaissance = null;
 
     #[ORM\Column]
+    #[Assert\NotNull]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y'])] // Ajout du format
     #[Groups(['user:read'])]
     private ?\DateTimeImmutable $createdAt = null;
-
     #[ORM\Column]
     #[Groups(['user:read'])]
     private ?bool $isVerified = false;
