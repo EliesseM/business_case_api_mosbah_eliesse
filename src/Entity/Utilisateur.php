@@ -7,6 +7,8 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Put;
 use App\Repository\UtilisateurRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -22,25 +24,35 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity('email', message: 'Cet email est déjà utilisé')]
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
 #[ApiResource(
+    normalizationContext: ['groups' => ['user:read']],
+    denormalizationContext: ['groups' => ['user:write']],
     operations: [
-        new Get(
-            security: "is_granted('IS_AUTHENTICATED_FULLY')",
+        new GetCollection(
+            security: "is_granted('ROLE_ADMIN')",
+            normalizationContext: ['groups' => ['user:read', 'user:list']],
+            paginationEnabled: true,
+            paginationItemsPerPage: 10
         ),
 
-        new GetCollection(
-            normalizationContext: ['groups' => ['user:read', 'reservation:read']],
+        new Get(
+            security: "is_granted('ROLE_ADMIN') or object == user",
+            normalizationContext: ['groups' => ['user:read', 'user:item']]
         ),
+
         new Post(
-            denormalizationContext: ['groups' => ['user:write']],
-            normalizationContext: ['groups' => ['user:read']],
+            security: "is_granted('ROLE_ADMIN')",
+            denormalizationContext: ['groups' => ['user:create']]
         ),
-        new Patch(
-            denormalizationContext: ['groups' => ['user:patch']],
-            normalizationContext: ['groups' => ['user:read']],
+
+        new Put(
+            security: "is_granted('ROLE_ADMIN') or object == user",
+            denormalizationContext: ['groups' => ['user:update']]
+        ),
+
+        new Delete(
+            security: "is_granted('ROLE_ADMIN')"
         )
-    ],
-    normalizationContext: ['groups' => ['user:read']],
-    denormalizationContext: ['groups' => ['user:write']]
+    ]
 )]
 class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {

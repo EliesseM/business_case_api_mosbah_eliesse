@@ -2,16 +2,44 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Get;
 use App\Repository\MessageRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => ['message:read']],
-    denormalizationContext: ['groups' => ['message:write']]
+    normalizationContext: ['groups' => ['image:read']],
+    denormalizationContext: ['groups' => ['image:write']],
+    operations: [
+        new Get(
+            normalizationContext: ['groups' => ['image:read']],
+            security: "is_granted('ROLE_USER')"
+        ),
+        new GetCollection(
+            normalizationContext: ['groups' => ['image:list']],
+            security: "is_granted('ROLE_USER')"
+        ),
+        new Post(
+            denormalizationContext: ['groups' => ['image:write']],
+            security: "is_granted('ROLE_USER')"
+        ),
+        new Put(
+            denormalizationContext: ['groups' => ['image:write']],
+            security: "is_granted('ROLE_USER')"
+        ),
+        new Delete(
+            security: "is_granted('ROLE_USER')"
+        )
+    ]
 )]
 class Message
 {
@@ -27,6 +55,7 @@ class Message
 
     #[ORM\Column]
     #[Groups(['message:read'])]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'messages')]

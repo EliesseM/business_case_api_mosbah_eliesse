@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Get;
 use App\Repository\CommentaireRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,17 +11,35 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 
 #[ORM\Entity(repositoryClass: CommentaireRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => ['commentaire:list']],
+    normalizationContext: ['groups' => ['commentaire:read']],
     denormalizationContext: ['groups' => ['commentaire:write']],
     operations: [
-        new \ApiPlatform\Metadata\Get(normalizationContext: ['groups' => ['commentaire:read']]),
-        new \ApiPlatform\Metadata\GetCollection(),
-        new \ApiPlatform\Metadata\Post(),
-        new \ApiPlatform\Metadata\Put(),
-        new \ApiPlatform\Metadata\Delete(),
+        new Get(
+            normalizationContext: ['groups' => ['commentaire:read']],
+            security: "is_granted('ROLE_USER')"
+        ),
+        new GetCollection(
+            normalizationContext: ['groups' => ['commentaire:list']],
+            security: "is_granted('ROLE_USER')"
+        ),
+        new Post(
+            denormalizationContext: ['groups' => ['commentaire:write']],
+            security: "is_granted('ROLE_USER')"
+        ),
+        new Put(
+            denormalizationContext: ['groups' => ['commentaire:write']],
+            security: "is_granted('ROLE_USER')"
+        ),
+        new Delete(
+            security: "is_granted('ROLE_ADMIN') or object.getCommentaireUtilisateur() == user"
+        )
     ]
 )]
 class Commentaire

@@ -11,19 +11,35 @@ use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\GetCollection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 #[ORM\Entity(repositoryClass: IndisponibiliteRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => ['indisponibilite:list']],
+    normalizationContext: ['groups' => ['indisponibilite:read']],
     denormalizationContext: ['groups' => ['indisponibilite:write']],
     operations: [
-        new Get(normalizationContext: ['groups' => ['indisponibilite:read']]),
-        new GetCollection(),
-        new Post(),
-        new Put(),
-        new Delete()
+        new Get(
+            normalizationContext: ['groups' => ['indisponibilite:read']],
+            security: "is_granted('ROLE_USER')"
+        ),
+        new GetCollection(
+            normalizationContext: ['groups' => ['indisponibilite:list']],
+            security: "is_granted('ROLE_USER')"
+        ),
+        new Post(
+            denormalizationContext: ['groups' => ['indisponibilite:write']],
+            security: "is_granted('ROLE_USER')"
+        ),
+        new Put(
+            denormalizationContext: ['groups' => ['indisponibilite:write']],
+            security: "is_granted('ROLE_USER')"
+        ),
+        new Delete(
+            security: "is_granted('ROLE_USER')"
+        )
     ]
 )]
 class Indisponibilite
@@ -37,11 +53,13 @@ class Indisponibilite
     #[ORM\Column]
     #[Groups(['indisponibilite:list', 'indisponibilite:read', 'indisponibilite:write'])]
     #[SerializedName('dateDebut')]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d'])]
     private ?\DateTime $dateDebut = null;
 
     #[ORM\Column]
     #[Groups(['indisponibilite:list', 'indisponibilite:read', 'indisponibilite:write'])]
     #[SerializedName('dateFin')]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d'])]
     private ?\DateTime $dateFin = null;
 
     #[ORM\Column(type: Types::TEXT)]

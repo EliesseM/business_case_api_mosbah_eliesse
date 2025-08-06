@@ -14,14 +14,28 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EquipementRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => ['equipement:list']],
+    normalizationContext: ['groups' => ['equipement:read']],
     denormalizationContext: ['groups' => ['equipement:write']],
     operations: [
-        new \ApiPlatform\Metadata\Get(normalizationContext: ['groups' => ['equipement:read']]),
-        new \ApiPlatform\Metadata\GetCollection(),
-        new \ApiPlatform\Metadata\Post(),
-        new \ApiPlatform\Metadata\Put(),
-        new \ApiPlatform\Metadata\Delete(),
+        new \ApiPlatform\Metadata\Get(
+            normalizationContext: ['groups' => ['equipement:read']],
+            security: "is_granted('ROLE_USER')"
+        ),
+        new \ApiPlatform\Metadata\GetCollection(
+            normalizationContext: ['groups' => ['equipement:list']],
+            security: "is_granted('ROLE_USER')"
+        ),
+        new \ApiPlatform\Metadata\Post(
+            denormalizationContext: ['groups' => ['equipement:write']],
+            security: "is_granted('ROLE_ADMIN')"
+        ),
+        new \ApiPlatform\Metadata\Put(
+            denormalizationContext: ['groups' => ['equipement:write']],
+            security: "is_granted('ROLE_ADMIN')"
+        ),
+        new \ApiPlatform\Metadata\Delete(
+            security: "is_granted('ROLE_ADMIN')"
+        ),
     ]
 )]
 class Equipement

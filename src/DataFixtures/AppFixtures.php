@@ -29,52 +29,15 @@ class AppFixtures extends Fixture
     // Méthode principale appelée pour charger les fixtures
     public function load(ObjectManager $manager): void
     {
-        // --- CREATION ADMIN ---
-        $adminData = json_decode(file_get_contents(__DIR__ . '/data/admin.json'), true);
-        foreach ($adminData as $data) {
-            $admin = new Utilisateur();
-            $hashedPassword = $this->passwordHasher->hashPassword($admin, $data['motDePasse']);
-            $admin->setUsername($data['username'])
-                ->setGenre($data['genre'])
-                ->setNom($data['nom'])
-                ->setPrenom($data['prenom'])
-                ->setEmail($data['email'])
-                ->setPassword($hashedPassword)
-                ->setDateNaissance(new \DateTime($data['dateNaissance']))
-                ->setCreatedAt(new \DateTimeImmutable($data['createdAt']))
-                ->setIsVerified($data['isVerified'])
-                ->setProfilPicture($data['profilPicture'])
-                ->setBillingAdress($data['billingAdress'])
-                ->setRoles(['ROLE_ADMIN']);
-            $manager->persist($admin);
-        }
+        // Chargement de tous les utilisateurs depuis un seul fichier JSON
+        $usersData = json_decode(file_get_contents(__DIR__ . '/data/users.json'), true);
+        $utilisateurs = []; // Pour stockage éventuel d'utilisateurs liés
 
-        // --- CREATION PROPRIETAIRE ---
-        $proprietaireData = json_decode(file_get_contents(__DIR__ . '/data/proprietaire.json'), true);
-        foreach ($proprietaireData as $data) {
-            $proprietaire = new Utilisateur();
-            $hashedPassword = $this->passwordHasher->hashPassword($proprietaire, $data['motDePasse']);
-            $proprietaire->setUsername($data['username'])
-                ->setGenre($data['genre'])
-                ->setNom($data['nom'])
-                ->setPrenom($data['prenom'])
-                ->setEmail($data['email'])
-                ->setPassword($hashedPassword)
-                ->setDateNaissance(new \DateTime($data['dateNaissance']))
-                ->setCreatedAt(new \DateTimeImmutable($data['createdAt']))
-                ->setIsVerified($data['isVerified'])
-                ->setProfilPicture($data['profilPicture'])
-                ->setBillingAdress($data['billingAdress'])
-                ->setRoles(['ROLE_PROPRIETAIRE']);
-            $manager->persist($proprietaire);
-        }
-
-        // --- CREATION UTILISATEURS ---
-        $usersData = json_decode(file_get_contents(__DIR__ . '/data/user.json'), true);
-        $utilisateurs = []; // On stocke les utilisateurs car ils sont utilisés dans plusieurs entités liées
         foreach ($usersData as $data) {
             $utilisateur = new Utilisateur();
+
             $hashedPassword = $this->passwordHasher->hashPassword($utilisateur, $data['motDePasse']);
+
             $utilisateur->setUsername($data['username'])
                 ->setGenre($data['genre'])
                 ->setNom($data['nom'])
@@ -85,8 +48,15 @@ class AppFixtures extends Fixture
                 ->setCreatedAt(new \DateTimeImmutable($data['createdAt']))
                 ->setIsVerified($data['isVerified'])
                 ->setProfilPicture($data['profilPicture'])
-                ->setBillingAdress($data['billingAdress'])
-                ->setRoles(['ROLE_USER']);
+                ->setBillingAdress($data['billingAdress']);
+
+            // Assigner les rôles depuis le JSON ou par défaut ROLE_USER
+            if (isset($data['roles']) && is_array($data['roles']) && count($data['roles']) > 0) {
+                $utilisateur->setRoles($data['roles']);
+            } else {
+                $utilisateur->setRoles(['ROLE_USER']);
+            }
+
             $manager->persist($utilisateur);
             $utilisateurs[] = $utilisateur;
         }

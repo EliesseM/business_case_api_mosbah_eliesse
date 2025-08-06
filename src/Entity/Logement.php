@@ -19,11 +19,22 @@ use Symfony\Component\Serializer\Annotation\Groups;
     normalizationContext: ['groups' => ['logement:list']],
     denormalizationContext: ['groups' => ['logement:write']],
     operations: [
-        new Get(normalizationContext: ['groups' => ['logement:read']]),
-        new GetCollection(),
-        new Post(),
-        new Put(),
-        new Delete()
+        new Get(
+            normalizationContext: ['groups' => ['logement:read']],
+            security: "is_granted('ROLE_USER') and object.getLogementUtilisateur() == user"
+        ),
+        new GetCollection(
+            security: "is_granted('ROLE_USER')"
+        ),
+        new Post(
+            security: "is_granted('ROLE_USER')"
+        ),
+        new Put(
+            security: "is_granted('ROLE_USER') and object.getLogementUtilisateur() == user"
+        ),
+        new Delete(
+            security: "is_granted('ROLE_USER') and object.getLogementUtilisateur() == user"
+        ),
     ]
 )]
 class Logement

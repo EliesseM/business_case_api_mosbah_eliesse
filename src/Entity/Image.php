@@ -14,14 +14,28 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ImageRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => ['image:list']],
+    normalizationContext: ['groups' => ['image:read']],
     denormalizationContext: ['groups' => ['image:write']],
     operations: [
-        new Get(normalizationContext: ['groups' => ['image:read']]),
-        new GetCollection(),
-        new Post(),
-        new Put(),
-        new Delete()
+        new Get(
+            normalizationContext: ['groups' => ['image:read']],
+            security: "is_granted('ROLE_USER')"
+        ),
+        new GetCollection(
+            normalizationContext: ['groups' => ['image:list']],
+            security: "is_granted('ROLE_USER')"
+        ),
+        new Post(
+            denormalizationContext: ['groups' => ['image:write']],
+            security: "is_granted('ROLE_USER')"
+        ),
+        new Put(
+            denormalizationContext: ['groups' => ['image:write']],
+            security: "is_granted('ROLE_USER')"
+        ),
+        new Delete(
+            security: "is_granted('ROLE_USER')"
+        )
     ]
 )]
 class Image

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
@@ -15,19 +16,27 @@ use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
 #[ApiResource(
+    normalizationContext: ['groups' => ['user:read']],
+    denormalizationContext: ['groups' => ['user:write']],
     operations: [
         new GetCollection(
-            name: 'reservations',
             uriTemplate: '/reservations',
             normalizationContext: ['groups' => ['reservation:read']],
+            security: "is_granted('ROLE_USER')"
+        ),
+        new Get(
+            normalizationContext: ['groups' => ['reservation:read']],
+            security: "is_granted('ROLE_USER')"
         ),
         new Post(
             denormalizationContext: ['groups' => ['reservation:write']],
             normalizationContext: ['groups' => ['reservation:read']],
+            security: "is_granted('ROLE_USER')"
         ),
         new Patch(
             denormalizationContext: ['groups' => ['reservation:patch']],
             normalizationContext: ['groups' => ['reservation:read']],
+            security: "is_granted('ROLE_ADMIN') or object.getReservationUtilisateur() == user"
         )
     ]
 )]

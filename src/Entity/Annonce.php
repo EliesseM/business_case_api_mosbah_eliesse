@@ -3,6 +3,11 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\AnnonceRepository;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
@@ -17,14 +22,14 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AnnonceRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => ['annonce:list']],
+    normalizationContext: ['groups' => ['annonce:read']],
     denormalizationContext: ['groups' => ['annonce:write']],
     operations: [
-        new \ApiPlatform\Metadata\Get(normalizationContext: ['groups' => ['annonce:read']]),
-        new \ApiPlatform\Metadata\GetCollection(),
-        new \ApiPlatform\Metadata\Post(),
-        new \ApiPlatform\Metadata\Put(),
-        new \ApiPlatform\Metadata\Delete(),
+        new Get(security: "is_granted('ROLE_USER')"),
+        new GetCollection(security: "is_granted('ROLE_USER')"),
+        new Post(security: "is_granted('ROLE_USER')"),
+        new Put(security: "is_granted('ROLE_USER')"),
+        new Delete(security: "is_granted('ROLE_ADMIN') or object.getAnnonceUtilisateur() == user"),
     ]
 )]
 class Annonce

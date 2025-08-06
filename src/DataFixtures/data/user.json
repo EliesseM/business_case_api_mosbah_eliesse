@@ -1,8 +1,33 @@
-
 [
-
-
- {
+  {
+    "username": "admin",
+    "genre": "Homme",
+    "nom": "Admin",
+    "prenom": "Principal",
+    "email": "admin@example.com",
+    "motDePasse": "password",
+    "dateNaissance": "1980-01-01",
+    "createdAt": "2024-07-24T00:00:00Z",
+    "isVerified": true,
+    "profilPicture": "path/to/admin.jpg",
+    "billingAdress": "1 Rue de l'Admin, AdminVille",
+    "roles": ["ROLE_ADMIN"]
+  },
+  {
+    "username": "proprietaire",
+    "genre": "Homme",
+    "nom": "Proprietaire",
+    "prenom": "Principal",
+    "email": "proprietaire@example.com",
+    "motDePasse": "password",
+    "dateNaissance": "1980-01-01",
+    "createdAt": "2024-07-24T00:00:00Z",
+    "isVerified": true,
+    "profilPicture": "path/to/proprio.jpg",
+    "billingAdress": "1 Rue de l'proprio, proprietaireVille",
+    "roles": ["ROLE_PROPRIETAIRE"]
+  },
+  {
     "username": "john_doe",
     "genre": "Homme",
     "nom": "Doe",
@@ -13,7 +38,8 @@
     "createdAt": "2024-07-24T00:00:00Z",
     "isVerified": true,
     "profilPicture": "path/to/profile/picture.jpg",
-    "billingAdress": "123 Main St, City, Country"
+    "billingAdress": "123 Main St, City, Country",
+    "roles": ["ROLE_USER"]
   },
   {
     "username": "alice_w",
@@ -26,7 +52,8 @@
     "createdAt": "2024-07-24T00:00:00Z",
     "isVerified": true,
     "profilPicture": "path/to/alice.jpg",
-    "billingAdress": "10 Downing St, London, UK"
+    "billingAdress": "10 Downing St, London, UK",
+    "roles": ["ROLE_USER"]
   },
   {
     "username": "bob_s",
@@ -39,7 +66,8 @@
     "createdAt": "2024-07-24T00:00:00Z",
     "isVerified": false,
     "profilPicture": "path/to/bob.jpg",
-    "billingAdress": "221B Baker St, London, UK"
+    "billingAdress": "221B Baker St, London, UK",
+    "roles": ["ROLE_USER"]
   },
   {
     "username": "carol_j",
@@ -52,7 +80,8 @@
     "createdAt": "2024-07-24T00:00:00Z",
     "isVerified": true,
     "profilPicture": "path/to/carol.jpg",
-    "billingAdress": "742 Evergreen Terrace, Springfield"
+    "billingAdress": "742 Evergreen Terrace, Springfield",
+    "roles": ["ROLE_USER"]
   },
   {
     "username": "dave_m",
@@ -65,7 +94,8 @@
     "createdAt": "2024-07-24T00:00:00Z",
     "isVerified": true,
     "profilPicture": "path/to/dave.jpg",
-    "billingAdress": "1600 Pennsylvania Ave, Washington DC"
+    "billingAdress": "1600 Pennsylvania Ave, Washington DC",
+    "roles": ["ROLE_USER"]
   },
   {
     "username": "eve_b",
@@ -78,7 +108,8 @@
     "createdAt": "2024-07-24T00:00:00Z",
     "isVerified": false,
     "profilPicture": "path/to/eve.jpg",
-    "billingAdress": "221B Baker St, London, UK"
+    "billingAdress": "221B Baker St, London, UK",
+    "roles": ["ROLE_USER"]
   },
   {
     "username": "frank_t",
@@ -91,7 +122,8 @@
     "createdAt": "2024-07-24T00:00:00Z",
     "isVerified": true,
     "profilPicture": "path/to/frank.jpg",
-    "billingAdress": "4 Privet Drive, Little Whinging"
+    "billingAdress": "4 Privet Drive, Little Whinging",
+    "roles": ["ROLE_USER"]
   },
   {
     "username": "grace_l",
@@ -104,7 +136,8 @@
     "createdAt": "2024-07-24T00:00:00Z",
     "isVerified": true,
     "profilPicture": "path/to/grace.jpg",
-    "billingAdress": "10 Downing St, London, UK"
+    "billingAdress": "10 Downing St, London, UK",
+    "roles": ["ROLE_USER"]
   },
   {
     "username": "henry_w",
@@ -117,7 +150,8 @@
     "createdAt": "2024-07-24T00:00:00Z",
     "isVerified": false,
     "profilPicture": "path/to/henry.jpg",
-    "billingAdress": "742 Evergreen Terrace, Springfield"
+    "billingAdress": "742 Evergreen Terrace, Springfield",
+    "roles": ["ROLE_USER"]
   },
   {
     "username": "irene_k",
@@ -130,7 +164,8 @@
     "createdAt": "2024-07-24T00:00:00Z",
     "isVerified": true,
     "profilPicture": "path/to/irene.jpg",
-    "billingAdress": "1600 Pennsylvania Ave, Washington DC"
+    "billingAdress": "1600 Pennsylvania Ave, Washington DC",
+    "roles": ["ROLE_USER"]
   },
   {
     "username": "jack_c",
@@ -143,7 +178,7 @@
     "createdAt": "2024-07-24T00:00:00Z",
     "isVerified": true,
     "profilPicture": "path/to/jack.jpg",
-    "billingAdress": "4 Privet Drive, Little Whinging"
+    "billingAdress": "4 Privet Drive, Little Whinging",
+    "roles": ["ROLE_USER"]
   }
-
 ]
