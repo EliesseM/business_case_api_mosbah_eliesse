@@ -1,9 +1,142 @@
 [
   {
-    "titre": "Annonce Title",
-    "description": "This is a description of the annonce.",
+    "titre": "Appartement cosy en centre-ville",
+    "description": "Un appartement confortable proche de toutes commodités.",
+    "prixJournee": 80.0,
+    "nbPlaces": 2,
+    "mixte": true
+  },
+  {
+    "titre": "Maison familiale avec jardin",
+    "description": "Grande maison avec jardin et terrasse pour profiter en famille.",
+    "prixJournee": 120.0,
+    "nbPlaces": 6,
+    "mixte": true
+  },
+  {
+    "titre": "Studio moderne proche métro",
+    "description": "Studio entièrement équipé à deux pas du métro.",
+    "prixJournee": 60.0,
+    "nbPlaces": 1,
+    "mixte": true
+  },
+  {
+    "titre": "Chambre privée chez l’habitant",
+    "description": "Chambre calme dans un appartement partagé.",
+    "prixJournee": 40.0,
+    "nbPlaces": 1,
+    "mixte": false
+  },
+  {
+    "titre": "Loft spacieux avec vue panoramique",
+    "description": "Loft lumineux offrant une vue imprenable sur la ville.",
+    "prixJournee": 150.0,
+    "nbPlaces": 4,
+    "mixte": true
+  },
+  {
+    "titre": "Appartement design près du parc",
+    "description": "Appartement design avec accès direct au parc voisin.",
+    "prixJournee": 90.0,
+    "nbPlaces": 3,
+    "mixte": true
+  },
+  {
+    "titre": "Maison de campagne charmante",
+    "description": "Maison au calme avec grand jardin à la campagne.",
+    "prixJournee": 110.0,
+    "nbPlaces": 5,
+    "mixte": true
+  },
+  {
+    "titre": "Appartement lumineux avec balcon",
+    "description": "Appartement avec balcon et belle luminosité.",
+    "prixJournee": 85.0,
+    "nbPlaces": 2,
+    "mixte": true
+  },
+  {
+    "titre": "Studio économique pour voyageurs",
+    "description": "Studio simple et économique idéal pour courts séjours.",
+    "prixJournee": 50.0,
+    "nbPlaces": 1,
+    "mixte": true
+  },
+  {
+    "titre": "Appartement familial proche écoles",
+    "description": "Appartement adapté aux familles, proche des écoles.",
+    "prixJournee": 95.0,
+    "nbPlaces": 4,
+    "mixte": true
+  },
+  {
+    "titre": "Loft artistique dans quartier branché",
+    "description": "Loft avec décoration artistique dans un quartier animé.",
+    "prixJournee": 140.0,
+    "nbPlaces": 3,
+    "mixte": true
+  },
+  {
+    "titre": "Chambre d’hôte confortable",
+    "description": "Chambre d’hôte cosy avec petit déjeuner inclus.",
+    "prixJournee": 55.0,
+    "nbPlaces": 1,
+    "mixte": false
+  },
+  {
+    "titre": "Maison avec piscine privée",
+    "description": "Maison moderne avec piscine privée et jardin.",
+    "prixJournee": 180.0,
+    "nbPlaces": 6,
+    "mixte": true
+  },
+  {
+    "titre": "Appartement proche gare",
+    "description": "Appartement pratique pour voyageurs proches de la gare.",
+    "prixJournee": 75.0,
+    "nbPlaces": 2,
+    "mixte": true
+  },
+  {
+    "titre": "Studio neuf en centre-ville",
+    "description": "Studio moderne récemment rénové en plein centre.",
+    "prixJournee": 70.0,
+    "nbPlaces": 1,
+    "mixte": true
+  },
+  {
+    "titre": "Maison avec cheminée",
+    "description": "Maison chaleureuse avec cheminée pour les soirées d’hiver.",
+    "prixJournee": 130.0,
+    "nbPlaces": 5,
+    "mixte": true
+  },
+  {
+    "titre": "Appartement calme et lumineux",
+    "description": "Appartement idéal pour se reposer en ville.",
+    "prixJournee": 85.0,
+    "nbPlaces": 3,
+    "mixte": true
+  },
+  {
+    "titre": "Chambre privée avec salle de bain",
+    "description": "Chambre confortable avec salle de bain privée.",
+    "prixJournee": 45.0,
+    "nbPlaces": 1,
+    "mixte": false
+  },
+  {
+    "titre": "Appartement avec terrasse",
+    "description": "Appartement moderne avec grande terrasse extérieure.",
     "prixJournee": 100.0,
     "nbPlaces": 4,
+    "mixte": true
+  },
+  {
+    "titre": "Maison typique française",
+    "description": "Maison traditionnelle avec jardin et décoration authentique.",
+    "prixJournee": 115.0,
+    "nbPlaces": 5,
     "mixte": true
   }
 ]

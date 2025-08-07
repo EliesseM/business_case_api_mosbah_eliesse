@@ -1,7 +1,102 @@
 [
   {
-    "commentaire": "This is a comment.",
+    "commentaire": "Excellent séjour, logement très propre et bien situé.",
     "note": 5,
-    "datePublication": "2025-07-25T12:34:56+00:00"
+    "datePublication": "2025-07-20T10:15:30+00:00"
+  },
+  {
+    "commentaire": "Hôte très accueillant et disponible.",
+    "note": 4,
+    "datePublication": "2025-07-21T14:22:10+00:00"
+  },
+  {
+    "commentaire": "Le logement correspond parfaitement à la description.",
+    "note": 5,
+    "datePublication": "2025-07-22T09:10:05+00:00"
+  },
+  {
+    "commentaire": "Quelques petits défauts mais dans l'ensemble satisfaisant.",
+    "note": 3,
+    "datePublication": "2025-07-23T16:45:20+00:00"
+  },
+  {
+    "commentaire": "Propreté à revoir, mais emplacement idéal.",
+    "note": 2,
+    "datePublication": "2025-07-24T11:30:00+00:00"
+  },
+  {
+    "commentaire": "Super expérience, je recommande vivement.",
+    "note": 5,
+    "datePublication": "2025-07-25T08:00:00+00:00"
+  },
+  {
+    "commentaire": "Le logement était un peu bruyant la nuit.",
+    "note": 3,
+    "datePublication": "2025-07-26T20:10:45+00:00"
+  },
+  {
+    "commentaire": "Parfait pour un séjour en famille.",
+    "note": 4,
+    "datePublication": "2025-07-27T13:05:15+00:00"
+  },
+  {
+    "commentaire": "Le propriétaire a été très réactif à nos demandes.",
+    "note": 5,
+    "datePublication": "2025-07-28T17:50:30+00:00"
+  },
+  {
+    "commentaire": "Manque d’équipements dans la cuisine.",
+    "note": 2,
+    "datePublication": "2025-07-29T19:25:00+00:00"
+  },
+  {
+    "commentaire": "Très bon rapport qualité/prix.",
+    "note": 4,
+    "datePublication": "2025-07-30T07:45:20+00:00"
+  },
+  {
+    "commentaire": "Logement cosy et confortable.",
+    "note": 5,
+    "datePublication": "2025-07-31T12:00:00+00:00"
+  },
+  {
+    "commentaire": "Propriétaire sympathique mais logement vieillissant.",
+    "note": 3,
+    "datePublication": "2025-08-01T09:30:10+00:00"
+  },
+  {
+    "commentaire": "Quartier calme et agréable.",
+    "note": 4,
+    "datePublication": "2025-08-02T15:20:40+00:00"
+  },
+  {
+    "commentaire": "Pas à la hauteur des attentes.",
+    "note": 1,
+    "datePublication": "2025-08-03T18:15:00+00:00"
+  },
+  {
+    "commentaire": "Service impeccable et logement bien équipé.",
+    "note": 5,
+    "datePublication": "2025-08-04T11:10:50+00:00"
+  },
+  {
+    "commentaire": "Bon séjour malgré quelques petits soucis.",
+    "note": 3,
+    "datePublication": "2025-08-05T14:05:30+00:00"
+  },
+  {
+    "commentaire": "Vue magnifique depuis le balcon.",
+    "note": 5,
+    "datePublication": "2025-08-06T08:40:20+00:00"
+  },
+  {
+    "commentaire": "Logement bien situé mais un peu petit.",
+    "note": 3,
+    "datePublication": "2025-08-07T13:30:00+00:00"
+  },
+  {
+    "commentaire": "Je reviendrai sans hésiter.",
+    "note": 5,
+    "datePublication": "2025-08-08T09:15:10+00:00"
   }
 ]

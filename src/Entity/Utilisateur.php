@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
@@ -54,6 +57,14 @@ use Symfony\Component\Validator\Constraints as Assert;
         )
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: [
+    'email' => 'partial',
+    'nom' => 'partial',
+    'prenom' => 'partial',
+    'roles' => 'partial',
+])]
+#[ApiFilter(OrderFilter::class, properties: ['email', 'nom'], arguments: ['orderParameterName' => 'order'])]
+
 class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]

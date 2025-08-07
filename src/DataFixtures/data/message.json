@@ -1,6 +1,82 @@
 [
   {
-    "contenu": "This is a message.",
-    "createdAt": "2025-07-25T15:00:00+00:00"
+    "contenu": "Hello! How are you?",
+    "createdAt": "2025-07-25T19:00:00+00:00"
+  },
+  {
+    "contenu": "I'm interested in your listing.",
+    "createdAt": "2025-07-26T22:00:00+00:00"
+  },
+  {
+    "contenu": "Can we schedule a visit?",
+    "createdAt": "2025-07-27T21:00:00+00:00"
+  },
+  {
+    "contenu": "Is the property still available?",
+    "createdAt": "2025-07-28T18:00:00+00:00"
+  },
+  {
+    "contenu": "Thank you for the information.",
+    "createdAt": "2025-07-29T23:00:00+00:00"
+  },
+  {
+    "contenu": "Please send more photos.",
+    "createdAt": "2025-07-30T15:00:00+00:00"
+  },
+  {
+    "contenu": "I have a few questions.",
+    "createdAt": "2025-07-31T21:00:00+00:00"
+  },
+  {
+    "contenu": "What is the exact address?",
+    "createdAt": "2025-08-01T16:00:00+00:00"
+  },
+  {
+    "contenu": "Can I bring my pet?",
+    "createdAt": "2025-08-02T19:00:00+00:00"
+  },
+  {
+    "contenu": "I'm ready to book.",
+    "createdAt": "2025-08-04T02:00:00+00:00"
+  },
+  {
+    "contenu": "Let's meet this weekend.",
+    "createdAt": "2025-08-05T00:00:00+00:00"
+  },
+  {
+    "contenu": "Can you lower the price?",
+    "createdAt": "2025-08-06T02:00:00+00:00"
+  },
+  {
+    "contenu": "Is Wi-Fi included?",
+    "createdAt": "2025-08-06T22:00:00+00:00"
+  },
+  {
+    "contenu": "Do you allow smoking?",
+    "createdAt": "2025-08-07T16:00:00+00:00"
+  },
+  {
+    "contenu": "How far is the metro?",
+    "createdAt": "2025-08-08T19:00:00+00:00"
+  },
+  {
+    "contenu": "I need a place for 3 months.",
+    "createdAt": "2025-08-09T22:00:00+00:00"
+  },
+  {
+    "contenu": "Can you confirm the reservation?",
+    "createdAt": "2025-08-10T20:00:00+00:00"
+  },
+  {
+    "contenu": "When is check-in time?",
+    "createdAt": "2025-08-11T15:00:00+00:00"
+  },
+  {
+    "contenu": "What’s the cancellation policy?",
+    "createdAt": "2025-08-12T17:00:00+00:00"
+  },
+  {
+    "contenu": "Thanks, I’ll get back to you.",
+    "createdAt": "2025-08-14T03:00:00+00:00"
   }
 ]

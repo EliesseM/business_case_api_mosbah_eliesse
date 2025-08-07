@@ -2,6 +2,10 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use App\Repository\IndisponibiliteRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
@@ -42,6 +46,11 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
         )
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: [
+    'annonce_indisponibilite.id' => 'exact',
+])]
+#[ApiFilter(DateFilter::class, properties: ['dateDebut', 'dateFin'])]
+#[ApiFilter(OrderFilter::class, properties: ['dateDebut'], arguments: ['orderParameterName' => 'order'])]
 class Indisponibilite
 {
     #[ORM\Id]

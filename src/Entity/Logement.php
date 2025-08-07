@@ -2,6 +2,10 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\RangeFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use App\Repository\LogementRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
@@ -37,6 +41,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: [
+    'type' => 'exact',
+    'surface' => 'exact',
+    'adresse.ville' => 'partial',
+    'logement_utilisateur.id' => 'exact',
+])]
+#[ApiFilter(RangeFilter::class, properties: ['surface'])]
+#[ApiFilter(OrderFilter::class, properties: ['surface'], arguments: ['orderParameterName' => 'order'])]
+
 class Logement
 {
     #[ORM\Id]

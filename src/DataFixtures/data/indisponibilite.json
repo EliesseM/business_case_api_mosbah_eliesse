@@ -1,7 +1,102 @@
 [
   {
     "dateDebut": "2025-07-25T15:00:00Z",
-    "dateFin": "2025-08-01T15:00:00Z",
-    "description": "Indisponibility description."
+    "dateFin": "2025-07-30T15:00:00Z",
+    "description": "Travaux de rénovation"
+  },
+  {
+    "dateDebut": "2025-08-05T10:00:00Z",
+    "dateFin": "2025-08-10T10:00:00Z",
+    "description": "Réservation privée"
+  },
+  {
+    "dateDebut": "2025-08-15T12:00:00Z",
+    "dateFin": "2025-08-20T12:00:00Z",
+    "description": "Maintenance système de chauffage"
+  },
+  {
+    "dateDebut": "2025-09-01T08:00:00Z",
+    "dateFin": "2025-09-07T08:00:00Z",
+    "description": "Nettoyage complet"
+  },
+  {
+    "dateDebut": "2025-09-10T14:00:00Z",
+    "dateFin": "2025-09-15T14:00:00Z",
+    "description": "Mise à jour de la décoration"
+  },
+  {
+    "dateDebut": "2025-09-20T09:00:00Z",
+    "dateFin": "2025-09-25T09:00:00Z",
+    "description": "Inspection annuelle"
+  },
+  {
+    "dateDebut": "2025-10-01T16:00:00Z",
+    "dateFin": "2025-10-05T16:00:00Z",
+    "description": "Réparations urgentes"
+  },
+  {
+    "dateDebut": "2025-10-10T11:00:00Z",
+    "dateFin": "2025-10-14T11:00:00Z",
+    "description": "Changement de mobilier"
+  },
+  {
+    "dateDebut": "2025-10-20T13:00:00Z",
+    "dateFin": "2025-10-25T13:00:00Z",
+    "description": "Congés du propriétaire"
+  },
+  {
+    "dateDebut": "2025-11-01T07:00:00Z",
+    "dateFin": "2025-11-06T07:00:00Z",
+    "description": "Remplacement de l’électroménager"
+  },
+  {
+    "dateDebut": "2025-11-10T14:00:00Z",
+    "dateFin": "2025-11-15T14:00:00Z",
+    "description": "Travaux d’isolation"
+  },
+  {
+    "dateDebut": "2025-11-20T09:00:00Z",
+    "dateFin": "2025-11-25T09:00:00Z",
+    "description": "Contrôle de sécurité"
+  },
+  {
+    "dateDebut": "2025-12-01T12:00:00Z",
+    "dateFin": "2025-12-06T12:00:00Z",
+    "description": "Peinture des murs"
+  },
+  {
+    "dateDebut": "2025-12-10T10:00:00Z",
+    "dateFin": "2025-12-15T10:00:00Z",
+    "description": "Amélioration de la plomberie"
+  },
+  {
+    "dateDebut": "2025-12-20T08:00:00Z",
+    "dateFin": "2025-12-25T08:00:00Z",
+    "description": "Décoration pour fêtes"
+  },
+  {
+    "dateDebut": "2026-01-05T09:00:00Z",
+    "dateFin": "2026-01-10T09:00:00Z",
+    "description": "Révisions techniques"
+  },
+  {
+    "dateDebut": "2026-01-15T11:00:00Z",
+    "dateFin": "2026-01-20T11:00:00Z",
+    "description": "Remplacement fenêtres"
+  },
+  {
+    "dateDebut": "2026-01-25T13:00:00Z",
+    "dateFin": "2026-01-30T13:00:00Z",
+    "description": "Installation nouvelle cuisine"
+  },
+  {
+    "dateDebut": "2026-02-05T14:00:00Z",
+    "dateFin": "2026-02-10T14:00:00Z",
+    "description": "Mise à jour électrique"
+  },
+  {
+    "dateDebut": "2026-02-15T07:00:00Z",
+    "dateFin": "2026-02-20T07:00:00Z",
+    "description": "Révision chaudière"
   }
 ]

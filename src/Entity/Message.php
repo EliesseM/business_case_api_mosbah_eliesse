@@ -2,6 +2,10 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\Get;
 use App\Repository\MessageRepository;
 use Doctrine\DBAL\Types\Types;
@@ -41,6 +45,14 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
         )
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: [
+    'expediteur.id' => 'exact',
+    'destinataire.id' => 'exact',
+    'contenu' => 'partial',
+])]
+#[ApiFilter(DateFilter::class, properties: ['dateEnvoi'])]
+#[ApiFilter(OrderFilter::class, properties: ['dateEnvoi'], arguments: ['orderParameterName' => 'order'])]
+
 class Message
 {
     #[ORM\Id]

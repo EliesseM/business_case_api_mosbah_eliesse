@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use App\Repository\ImageRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
@@ -30,14 +33,19 @@ use Symfony\Component\Serializer\Annotation\Groups;
             security: "is_granted('ROLE_USER')"
         ),
         new Put(
-            denormalizationContext: ['groups' => ['image:write']],
-            security: "is_granted('ROLE_USER')"
+            security: "is_granted('ROLE_USER') and object.getLogementImage().getLogementUtilisateur() == user",
         ),
         new Delete(
-            security: "is_granted('ROLE_USER')"
+            security: "is_granted('ROLE_USER') and object.getLogementImage().getLogementUtilisateur() == user",
         )
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: [
+    'annonceImage.id' => 'exact',
+    'logementImage.id' => 'exact',
+])]
+#[ApiFilter(OrderFilter::class, properties: ['id'], arguments: ['orderParameterName' => 'order'])]
+
 class Image
 {
     #[ORM\Id]

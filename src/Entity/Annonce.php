@@ -2,6 +2,11 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\RangeFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -32,6 +37,18 @@ use Doctrine\ORM\Mapping as ORM;
         new Delete(security: "is_granted('ROLE_ADMIN') or object.getAnnonceUtilisateur() == user"),
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: [
+    'titre' => 'partial',
+    'description' => 'partial',
+    'mixte' => 'exact',
+    'annonce_utilisateur.id' => 'exact',
+    'annonce_logement.id' => 'exact',
+    'services.nom' => 'partial'
+])]
+#[ApiFilter(RangeFilter::class, properties: ['prixJournee', 'nbPlaces'])]
+#[ApiFilter(DateFilter::class, properties: ['createdAt', 'updatedAt'])]
+#[ApiFilter(OrderFilter::class, properties: ['prixJournee', 'createdAt'], arguments: ['orderParameterName' => 'order'])]
+
 class Annonce
 {
     #[ORM\Id]
@@ -300,7 +317,7 @@ class Annonce
     #[Groups(['read', 'user:read', 'annonce:read'])] // adapte les groupes selon ton API
     public function getCreatedAtFormatted(): ?string
     {
-        return $this->createdAt;
+        return $this->createdAt?->format('Y-m-d H:i:s');
     }
 
     public function setCreatedAt(\DateTime $createdAt): static

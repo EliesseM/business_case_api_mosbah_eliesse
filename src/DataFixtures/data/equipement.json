@@ -1,6 +1,82 @@
 [
   {
-    "nom": "Equipement Name",
-    "description": "This is a description of the equipement."
+    "nom": "Wi-Fi",
+    "description": "Connexion internet haut débit sans fil."
+  },
+  {
+    "nom": "Climatisation",
+    "description": "Système de climatisation pour un confort optimal."
+  },
+  {
+    "nom": "Télévision",
+    "description": "Téléviseur à écran plat avec chaînes internationales."
+  },
+  {
+    "nom": "Cuisine équipée",
+    "description": "Cuisine avec réfrigérateur, four, micro-ondes et lave-vaisselle."
+  },
+  {
+    "nom": "Machine à laver",
+    "description": "Lave-linge pour vos besoins de lessive."
+  },
+  {
+    "nom": "Parking",
+    "description": "Place de parking réservée et sécurisée."
+  },
+  {
+    "nom": "Piscine",
+    "description": "Piscine extérieure disponible pour les résidents."
+  },
+  {
+    "nom": "Balcon",
+    "description": "Balcon privé avec vue agréable."
+  },
+  {
+    "nom": "Chauffage central",
+    "description": "Système de chauffage central efficace."
+  },
+  {
+    "nom": "Cheminée",
+    "description": "Cheminée fonctionnelle pour les soirées d’hiver."
+  },
+  {
+    "nom": "Salle de sport",
+    "description": "Accès à une salle de sport équipée."
+  },
+  {
+    "nom": "Ascenseur",
+    "description": "Ascenseur disponible dans l’immeuble."
+  },
+  {
+    "nom": "Animaux acceptés",
+    "description": "Les animaux de compagnie sont les bienvenus."
+  },
+  {
+    "nom": "Jardin",
+    "description": "Jardin privé pour profiter de l’extérieur."
+  },
+  {
+    "nom": "Détecteur de fumée",
+    "description": "Sécurité renforcée avec détecteur de fumée."
+  },
+  {
+    "nom": "Sèche-cheveux",
+    "description": "Sèche-cheveux disponible dans la salle de bain."
+  },
+  {
+    "nom": "Fer à repasser",
+    "description": "Fer et planche à repasser fournis."
+  },
+  {
+    "nom": "Linge de maison",
+    "description": "Draps, serviettes et linge de maison inclus."
+  },
+  {
+    "nom": "Coffre-fort",
+    "description": "Coffre-fort individuel sécurisé."
+  },
+  {
+    "nom": "Téléphone",
+    "description": "Ligne téléphonique disponible."
   }
 ]

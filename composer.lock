@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e5d7ea7046920ea8fa77dd7f1de8d2c3",
+    "content-hash": "dba6be7a6cb65271342bb3312ef15114",
     "packages": [
         {
             "name": "api-platform/core",
-            "version": "v4.1.19",
+            "version": "v4.1.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/api-platform/core.git",
-                "reference": "1dcc0da1bc56f2161ecfa863f7820e332a622d37"
+                "reference": "347c27e98e6a0c1c8d91da2dd069171ebe49da77"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/api-platform/core/zipball/1dcc0da1bc56f2161ecfa863f7820e332a622d37",
-                "reference": "1dcc0da1bc56f2161ecfa863f7820e332a622d37",
+                "url": "https://api.github.com/repos/api-platform/core/zipball/347c27e98e6a0c1c8d91da2dd069171ebe49da77",
+                "reference": "347c27e98e6a0c1c8d91da2dd069171ebe49da77",
                 "shasum": ""
             },
             "require": {
@@ -219,9 +219,9 @@
             ],
             "support": {
                 "issues": "https://github.com/api-platform/core/issues",
-                "source": "https://github.com/api-platform/core/tree/v4.1.19"
+                "source": "https://github.com/api-platform/core/tree/v4.1.20"
             },
-            "time": "2025-07-18T11:49:35+00:00"
+            "time": "2025-07-25T15:31:58+00:00"
         },
         {
             "name": "doctrine/collections",

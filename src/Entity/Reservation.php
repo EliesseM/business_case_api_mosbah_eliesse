@@ -2,6 +2,10 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
@@ -13,6 +17,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Serializer\Annotation\Context;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
 #[ApiResource(
@@ -40,6 +46,14 @@ use Doctrine\DBAL\Types\Types;
         )
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: [
+    'statut' => 'exact',
+    'reservation_utilisateur.id' => 'exact',
+    'reservation_annonce.id' => 'exact',
+])]
+#[ApiFilter(DateFilter::class, properties: ['dateDebut', 'dateFin'])]
+#[ApiFilter(OrderFilter::class, properties: ['dateDebut', 'dateFin'], arguments: ['orderParameterName' => 'order'])]
+
 class Reservation
 {
     #[Groups(['reservation:read'])]
@@ -50,10 +64,12 @@ class Reservation
 
     #[Groups(['reservation:read', 'reservation:write'])]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y'])]
     private ?\DateTime $dateDebut = null;
 
     #[Groups(['reservation:read', 'reservation:write'])]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y'])]
     private ?\DateTime $dateFin = null;
 
     #[Groups(['reservation:read', 'reservation:write'])]
@@ -66,6 +82,7 @@ class Reservation
 
     #[Groups(['reservation:read'])]
     #[ORM\Column(type: 'datetime_immutable')]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[Groups(['reservation:read', 'reservation:write'])]

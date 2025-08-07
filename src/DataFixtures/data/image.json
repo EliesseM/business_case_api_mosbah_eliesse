@@ -1,5 +1,22 @@
 [
-  {
-    "path": "path/to/image.jpg"
-  }
+  { "path": "images/logement1.jpg" },
+  { "path": "images/logement2.jpg" },
+  { "path": "images/logement3.jpg" },
+  { "path": "images/logement4.jpg" },
+  { "path": "images/logement5.jpg" },
+  { "path": "images/logement6.jpg" },
+  { "path": "images/logement7.jpg" },
+  { "path": "images/logement8.jpg" },
+  { "path": "images/logement9.jpg" },
+  { "path": "images/logement10.jpg" },
+  { "path": "images/logement11.jpg" },
+  { "path": "images/logement12.jpg" },
+  { "path": "images/logement13.jpg" },
+  { "path": "images/logement14.jpg" },
+  { "path": "images/logement15.jpg" },
+  { "path": "images/logement16.jpg" },
+  { "path": "images/logement17.jpg" },
+  { "path": "images/logement18.jpg" },
+  { "path": "images/logement19.jpg" },
+  { "path": "images/logement20.jpg" }
 ]

@@ -2,6 +2,10 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\Get;
 use App\Repository\CommentaireRepository;
 use Doctrine\DBAL\Types\Types;
@@ -42,6 +46,14 @@ use ApiPlatform\Metadata\Put;
         )
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: [
+    'note' => 'exact',
+    'commentaire_utilisateur.id' => 'exact',
+    'commentaire_reservation.id' => 'exact',
+])]
+#[ApiFilter(DateFilter::class, properties: ['datePublication'])]
+#[ApiFilter(OrderFilter::class, properties: ['note', 'datePublication'], arguments: ['orderParameterName' => 'order'])]
+
 class Commentaire
 {
     #[ORM\Id]
