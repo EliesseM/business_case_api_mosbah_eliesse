@@ -44,9 +44,15 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
 
         new Post(
+            name: 'create_user',
             security: "is_granted('PUBLIC_ACCESS')",
             denormalizationContext: ['groups' => ['user:create']],
             processor: UtilisateurPasswordHasherProcessor::class
+        ),
+
+        new Patch(
+            security: "is_granted('ROLE_ADMIN') or object == user",
+            denormalizationContext: ['groups' => ['user:update']]
         ),
 
         new Put(

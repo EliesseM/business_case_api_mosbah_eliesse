@@ -58,7 +58,7 @@ class Image
     #[Groups(['image:list', 'image:read', 'image:write'])]
     private ?string $path = null;
 
-    #[ORM\Column(nullable: true)]
+
     #[ORM\ManyToOne(inversedBy: 'images')]
     #[Groups(['image:read', 'image:write'])]
     private ?Logement $logementImage = null;

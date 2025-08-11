@@ -16,19 +16,29 @@ class UtilisateurPasswordHasherProcessor implements ProcessorInterface
         private UserPasswordHasherInterface $passwordHasher
     ) {}
 
-    public function process(mixed $data, Operation $operation, array $urivariables = [], array $context = []): Utilisateur
+    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): Utilisateur
     {
         if (!$data instanceof Utilisateur) {
             return $data;
         }
 
+        $operationName = $operation->getName();
         $plainPassword = $data->getPassword();
-        $data->setPassword($this->passwordHasher->hashPassword($data, $plainPassword));
-        $data->setRoles(['ROLE_USER']);
-        $data->setIsVerified(false);
-        $data->setCreatedAt(new \DateTimeImmutable());
 
-        $this->em->persist($data);
+        if ($plainPassword) {
+            $hashedPassword = $this->passwordHasher->hashPassword($data, $plainPassword);
+            $data->setPassword($hashedPassword);
+        }
+
+        if ($operationName === 'create_user') {
+            $data->setPassword($this->passwordHasher->hashPassword($data, $plainPassword));
+            $data->setRoles(['ROLE_USER']);
+            $data->setIsVerified(false);
+            $data->setCreatedAt(new \DateTimeImmutable());
+
+            $this->em->persist($data);
+        }
+
         $this->em->flush();
 
         return $data;

@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\AnnonceRepository;
@@ -38,8 +39,18 @@ use Webmozart\Assert\Assert;
             processor: AnnoncePostProcessor::class,
             security: "is_granted('ROLE_USER')"
         ),
-        new Put(security: "is_granted('ROLE_USER')"),
-        new Delete(security: "is_granted('ROLE_ADMIN') or object.getAnnonceUtilisateur() == user"),
+        new Patch(
+            security: "is_granted('ROLE_USER') and object.getAnnonceUtilisateur() == user",
+            securityMessage: "Vous ne pouvez modifier que vos propres annonces."
+        ),
+        new Put(
+            security: "is_granted('ROLE_USER') and object.getAnnonceUtilisateur() == user",
+            securityMessage: "Vous ne pouvez modifier que vos propres annonces."
+        ),
+        new Delete(
+            security: "is_granted('ROLE_ADMIN') or object.getAnnonceUtilisateur() == user",
+            securityMessage: "Vous ne pouvez supprimer que vos propres annonces."
+        ),
     ]
 )]
 #[ApiFilter(SearchFilter::class, properties: [
@@ -105,7 +116,7 @@ class Annonce
     #[Groups(['annonce:read', 'annonce:write'])]
     private ?Utilisateur $annonceUtilisateur = null;
 
-    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'reservations')]
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'reservationAnnonce')]
     #[Groups(['annonce:read'])]
     private Collection $reservations;
 
