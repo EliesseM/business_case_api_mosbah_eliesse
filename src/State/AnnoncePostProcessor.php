@@ -1,0 +1,51 @@
+<?php
+
+namespace App\State;
+
+use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\ProcessorInterface;
+use App\Entity\Annonce;
+use App\Entity\Utilisateur;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+
+class AnnoncePostProcessor implements ProcessorInterface
+{
+    public function __construct(
+        private Security $security,
+        private EntityManagerInterface $em
+    ) {}
+
+    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): Annonce
+    {
+        if (!$data instanceof Annonce || null === $data->getAnnonceLogement()) {
+            return $data;
+        }
+
+        $utilisateur = $this->security->getUser();
+        if (!$utilisateur instanceof Utilisateur) {
+            throw new AccessDeniedHttpException('Aucun utilisateur connecté.');
+        }
+
+        $proprietaire = $data->getAnnonceLogement()->getLogementUtilisateur();
+        if ($proprietaire?->getId() !== $utilisateur->getId()) {
+            throw new AccessDeniedHttpException('Vous ne pouvez créer une annonce que pour vos propres logements.');
+        }
+
+        // Donne le rôle PROPRIETAIRE si nécessaire
+        if (!in_array('ROLE_PROPRIETAIRE', $utilisateur->getRoles(), true)) {
+            $roles = $utilisateur->getRoles();
+            $roles[] = 'ROLE_PROPRIETAIRE';
+            $utilisateur->setRoles(array_unique($roles));
+            $this->em->persist($utilisateur);
+        }
+
+        $data->setAnnonceUtilisateur($utilisateur);
+
+        $this->em->persist($data);
+        $this->em->flush();
+
+        return $data;
+    }
+}

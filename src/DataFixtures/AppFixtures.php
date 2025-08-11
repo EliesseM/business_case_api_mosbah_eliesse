@@ -14,177 +14,238 @@ use App\Entity\Service;
 use App\Entity\Utilisateur;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Faker\Factory;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
-    private UserPasswordHasherInterface $passwordHasher;
+    public function __construct(
+        private UserPasswordHasherInterface $passwordHasher
+    ) {}
 
-    // Injecteur du service pour hasher les mots de passe
-    public function __construct(UserPasswordHasherInterface $passwordHasher)
-    {
-        $this->passwordHasher = $passwordHasher;
-    }
-
-    // Méthode principale appelée pour charger les fixtures
     public function load(ObjectManager $manager): void
     {
-        // Chargement de tous les utilisateurs depuis un seul fichier JSON
-        $usersData = json_decode(file_get_contents(__DIR__ . '/data/users.json'), true);
-        $utilisateurs = []; // Pour stockage éventuel d'utilisateurs liés
+        // j'importe mes données en json et les décode pour travailler avec un tableau associatif
+        $logements = json_decode(file_get_contents(__DIR__ . '/data/logements.json'), true);
+        $services = json_decode(file_get_contents(__DIR__ . '/data/service.json'), true);
+        $annonces = json_decode(file_get_contents(__DIR__ . '/data/annonce.json'), true);
+        $reservations = json_decode(file_get_contents(__DIR__ . '/data/reservation.json'), true);
+        $commentaires = json_decode(file_get_contents(__DIR__ . '/data/commentaire.json'), true);
+        $users = json_decode(file_get_contents(__DIR__ . '/data/users.json'), true);
 
-        foreach ($usersData as $data) {
+        $faker = Factory::create('fr_FR');
+
+        /**
+         * UTILISATEURS
+         */
+
+        $utilisateurs = [];
+        for ($i = 0; $i < 20; $i++) {
             $utilisateur = new Utilisateur();
+            $password = $this->passwordHasher->hashPassword($utilisateur, 'password123');
 
-            $hashedPassword = $this->passwordHasher->hashPassword($utilisateur, $data['motDePasse']);
-
-            $utilisateur->setUsername($data['username'])
-                ->setGenre($data['genre'])
-                ->setNom($data['nom'])
-                ->setPrenom($data['prenom'])
-                ->setEmail($data['email'])
-                ->setPassword($hashedPassword)
-                ->setDateNaissance(new \DateTime($data['dateNaissance']))
-                ->setCreatedAt(new \DateTimeImmutable($data['createdAt']))
-                ->setIsVerified($data['isVerified'])
-                ->setProfilPicture($data['profilPicture'])
-                ->setBillingAdress($data['billingAdress']);
-
-            // Assigner les rôles depuis le JSON ou par défaut ROLE_USER
-            if (isset($data['roles']) && is_array($data['roles']) && count($data['roles']) > 0) {
-                $utilisateur->setRoles($data['roles']);
-            } else {
-                $utilisateur->setRoles(['ROLE_USER']);
+            $roles = ['ROLE_USER'];
+            if ($i % 3 === 0) { // 1/3 sont aussi propriétaires
+                $roles[] = 'ROLE_PROPRIETAIRE';
             }
+
+            $utilisateur
+                ->setUsername($faker->userName())
+                ->setGenre($faker->randomElement(['Homme', 'Femme']))
+                ->setNom($faker->lastName())
+                ->setPrenom($faker->firstName())
+                ->setEmail($faker->unique()->safeEmail())
+                ->setPassword($password)
+                ->setDateNaissance($faker->dateTimeBetween('-60 years', '-18 years'))
+                ->setCreatedAt(new \DateTimeImmutable())
+                ->setIsVerified($faker->boolean(80))
+                ->setProfilPicture($faker->imageUrl(200, 200, 'people'))
+                ->setBillingAdress($faker->address())
+                ->setRoles(array_unique($roles));
 
             $manager->persist($utilisateur);
             $utilisateurs[] = $utilisateur;
         }
 
-        // --- CREATION LOGEMENTS ---
-        $logementsData = json_decode(file_get_contents(__DIR__ . '/data/logements.json'), true);
-        $logements = []; // Utile pour associer les annonces
-        foreach ($logementsData as $i => $data) {
+        foreach ($users as $userData) {
+            $utilisateur = new Utilisateur();
+
+            // Hash du mot de passe (pris depuis JSON)
+            $password = $this->passwordHasher->hashPassword($utilisateur, $userData['motDePasse']);
+
+            $utilisateur
+                ->setUsername($userData['username'])
+                ->setGenre($userData['genre'])
+                ->setNom($userData['nom'])
+                ->setPrenom($userData['prenom'])
+                ->setEmail($userData['email'])
+                ->setPassword($password)
+                ->setDateNaissance(new \DateTime($userData['dateNaissance']))
+                ->setCreatedAt(new \DateTimeImmutable())
+                ->setIsVerified($userData['isVerified'] ?? false)
+                ->setProfilPicture($userData['profilPicture'] ?? null)
+                ->setBillingAdress($userData['billingAdress'] ?? null)
+                ->setRoles($userData['roles'] ?? ['ROLE_USER']);
+
+            $manager->persist($utilisateur);
+        }
+
+        /**
+         * LOGEMENTS
+         */
+        $logements = [];
+        for ($i = 0; $i < 15; $i++) {
             $logement = new Logement();
-            $logement->setNomRue($data['nomRue'])
-                ->setNumeroRue($data['numeroRue'])
-                ->setComplementAdresse1($data['complementAdresse1'])
-                ->setComplementAdresse2($data['complementAdresse2'])
-                ->setVille($data['ville'])
-                ->setCodePostal($data['codePostal'])
-                ->setPays($data['pays'])
-                ->setLatitude($data['latitude'])
-                ->setLongitude($data['longitude'])
-                ->setSuperficie($data['superficie']);
-            // Associer un utilisateur propriétaire à ce logement (par exemple premier utilisateur)
-            $logement->setLogementUtilisateur($utilisateurs[$i % count($utilisateurs)]);
+            $logement
+                ->setNomRue($faker->streetName())
+                ->setNumeroRue($faker->buildingNumber())
+                ->setComplementAdresse1($faker->optional()->secondaryAddress())
+                ->setComplementAdresse2($faker->optional()->secondaryAddress())
+                ->setVille($faker->city())
+                ->setCodePostal($faker->postcode())
+                ->setPays($faker->country())
+                ->setLatitude($faker->latitude())
+                ->setLongitude($faker->longitude())
+                ->setSuperficie($faker->numberBetween(20, 300))
+                ->setLogementUtilisateur($faker->randomElement($utilisateurs));
+
             $manager->persist($logement);
             $logements[] = $logement;
         }
 
-        // --- CREATION SERVICES ---
-        $serviceData = json_decode(file_get_contents(__DIR__ . '/data/service.json'), true);
-        $services = []; // Utile pour associer les services aux annonces
-        foreach ($serviceData as $data) {
+        /**
+         * SERVICES
+         */
+        $services = [];
+        for ($i = 0; $i < 5; $i++) {
             $service = new Service();
-            $service->setNom($data['nom'])
-                ->setDescription($data['description']);
+            $service
+                ->setNom($faker->word())
+                ->setDescription($faker->sentence());
+
             $manager->persist($service);
             $services[] = $service;
         }
 
-        // --- CREATION ANNONCES ---
-        $annoncesData = json_decode(file_get_contents(__DIR__ . '/data/annonce.json'), true);
-        $annonces = []; // Utile pour les réservations et indisponibilités
-        foreach ($annoncesData as $i => $data) {
+        /**
+         * ANNONCES
+         */
+        $annonces = [];
+        for ($i = 0; $i < 30; $i++) {
             $annonce = new Annonce();
-            $annonce->setTitre($data['titre'])
-                ->setDescription($data['description'])
-                ->setPrixJournee($data['prixJournee'])
-                ->setNbPlaces($data['nbPlaces'])
-                ->setMixte($data['mixte'])
-                ->setAnnonceUtilisateur($utilisateurs[$i % count($utilisateurs)])
-                ->setAnnonceLogement($logements[$i % count($logements)]);
-            // Ajouter quelques services aux annonces
-            if (count($services) > 1) {
-                $annonce->addService($services[0]);
-                $annonce->addService($services[1]);
+            $annonce
+                ->setTitre($faker->catchPhrase())
+                ->setDescription($faker->paragraph())
+                ->setPrixJournee($faker->numberBetween(20, 500))
+                ->setNbPlaces($faker->numberBetween(1, 10))
+                ->setMixte($faker->boolean())
+                ->setAnnonceUtilisateur($faker->randomElement($utilisateurs))
+                ->setAnnonceLogement($faker->randomElement($logements));
+
+            foreach ($faker->randomElements($services, rand(1, 3)) as $service) {
+                $annonce->addService($service);
             }
+
             $manager->persist($annonce);
             $annonces[] = $annonce;
         }
 
-        // --- CREATION RESERVATIONS ---
-        $reservationData = json_decode(file_get_contents(__DIR__ . '/data/reservation.json'), true);
-        $reservations = []; // Utile pour associer les commentaires
-        foreach ($utilisateurs as $i => $utilisateur) {
-            $data = $reservationData[$i % count($reservationData)];
+        /**
+         * RESERVATIONS
+         */
+        $reservations = [];
+        for ($i = 0; $i < 20; $i++) {
+            $dateDebut = $faker->dateTimeBetween('now', '+1 month');
+            $dateFin = (clone $dateDebut)->modify('+' . rand(1, 14) . ' days');
+
             $reservation = new Reservation();
-            $reservation->setDateDebut(new \Datetime($data['dateDebut']))
-                ->setDateFin(new \DateTime($data['dateFin']))
-                ->setStatus($data['status'])
-                ->setPrixTotal($data['prixTotal'])
-                ->setCreatedAt(new \DateTimeImmutable($data['createdAt']))
-                ->setReservationUtilisateur($utilisateur)
-                ->setReservationAnnonce($annonces[$i % count($annonces)]);
+            $reservation
+                ->setDateDebut($dateDebut)
+                ->setDateFin($dateFin)
+                ->setStatus($faker->randomElement(['pending', 'confirmed', 'cancelled']))
+                ->setPrixTotal($faker->numberBetween(100, 5000))
+                ->setCreatedAt(new \DateTimeImmutable())
+                ->setReservationUtilisateur($faker->randomElement($utilisateurs))
+                ->setReservationAnnonce($faker->randomElement($annonces));
+
             $manager->persist($reservation);
             $reservations[] = $reservation;
         }
 
-        // --- CREATION COMMENTAIRES ---
-        $commentaireData = json_decode(file_get_contents(__DIR__ . '/data/commentaire.json'), true);
-        foreach ($commentaireData as $i => $data) {
-            $commentaire = new Commentaire();
-            $commentaire->setCommentaire($data['commentaire'])
-                ->setNote($data['note'])
-                ->setDatePublication(new \DateTime($data['datePublication']))
-                ->setCommentaireUtilisateur($utilisateurs[$i % count($utilisateurs)])
-                ->setCommentaireReservation($reservations[$i % count($reservations)]);
-            $manager->persist($commentaire);
-        }
+        /**
+         * COMMENTAIRES
+         */
+        $commentaires = $faker->randomElement($commentaires);
+        $commentaire = new Commentaire();
+        $commentaire
+            ->setCommentaire($faker->sentence(10))
+            ->setNote($faker->numberBetween(1, 5))
+            ->setDatePublication($faker->dateTimeBetween('-6 months'))
+            ->setCommentaireUtilisateur($faker->randomElement($utilisateurs))
+            ->setCommentaireReservation($faker->randomElement($reservations));
 
-        // --- CREATION EQUIPEMENTS ---
-        $equipementsData = json_decode(file_get_contents(__DIR__ . '/data/equipement.json'), true);
-        foreach ($equipementsData as $i => $data) {
+        $manager->persist($commentaire);
+
+
+        /**
+         * EQUIPEMENTS
+         */
+        for ($i = 0; $i < 10; $i++) {
             $equipement = new Equipement();
-            $equipement->setNom($data['nom'])
-                ->setDescription($data['description'])
-                ->addLogement($logements[$i % count($logements)]);
+            $equipement
+                ->setNom($faker->word())
+                ->setDescription($faker->sentence())
+                ->addLogement($faker->randomElement($logements));
+
             $manager->persist($equipement);
         }
 
-        // --- CREATION IMAGES ---
-        $imageData = json_decode(file_get_contents(__DIR__ . '/data/image.json'), true);
-        foreach ($imageData as $i => $data) {
+        /**
+         * IMAGES
+         */
+        for ($i = 0; $i < 20; $i++) {
             $image = new Image();
-            $image->setPath($data['path'])
-                ->setLogementImage($logements[$i % count($logements)]);
+            $image
+                ->setPath($faker->imageUrl(640, 480, 'house', true))
+                ->setLogementImage($faker->randomElement($logements));
+
             $manager->persist($image);
         }
 
-        // --- CREATION INDISPONIBILITES ---
-        $indisponibiliteData = json_decode(file_get_contents(__DIR__ . '/data/indisponibilite.json'), true);
-        foreach ($indisponibiliteData as $i => $data) {
-            $indisponibilite = new Indisponibilite();
-            $indisponibilite->setDateDebut(new \Datetime($data['dateDebut']))
-                ->setDateFin(new \DateTime($data['dateFin']))
-                ->setDescription($data['description'])
-                ->setAnnonceIndisponibilite($annonces[$i % count($annonces)]);
-            $manager->persist($indisponibilite);
+        /**
+         * INDISPONIBILITES
+         */
+        for ($i = 0; $i < 10; $i++) {
+            $dateDebut = $faker->dateTimeBetween('now', '+2 months');
+            $dateFin = (clone $dateDebut)->modify('+' . rand(1, 14) . ' days');
+
+            $indispo = new Indisponibilite();
+            $indispo
+                ->setDateDebut($dateDebut)
+                ->setDateFin($dateFin)
+                ->setDescription($faker->sentence())
+                ->setAnnonceIndisponibilite($faker->randomElement($annonces));
+
+            $manager->persist($indispo);
         }
 
-        // --- CREATION MESSAGES ---
-        $messageData = json_decode(file_get_contents(__DIR__ . '/data/message.json'), true);
-        foreach ($messageData as $i => $data) {
+        /**
+         * MESSAGES
+         */
+        for ($i = 0; $i < 20; $i++) {
+            $sender = $faker->randomElement($utilisateurs);
+            $receiver = $faker->randomElement(array_filter($utilisateurs, fn($u) => $u !== $sender));
+
             $message = new Message();
-            $message->setContenu($data['contenu'])
-                ->setCreatedAt(new \DateTimeImmutable($data['createdAt']))
-                ->setMessageReceiver($utilisateurs[$i % count($utilisateurs)])
-                ->setMessageSender($utilisateurs[$i % count($utilisateurs)]);
+            $message
+                ->setContenu($faker->sentence(12))
+                ->setCreatedAt(new \DateTimeImmutable())
+                ->setMessageSender($sender)
+                ->setMessageReceiver($receiver);
+
             $manager->persist($message);
         }
 
-        // Valide et enregistre tout en base de données
         $manager->flush();
     }
 }

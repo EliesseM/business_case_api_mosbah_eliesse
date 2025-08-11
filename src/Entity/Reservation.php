@@ -48,8 +48,8 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 )]
 #[ApiFilter(SearchFilter::class, properties: [
     'statut' => 'exact',
-    'reservation_utilisateur.id' => 'exact',
-    'reservation_annonce.id' => 'exact',
+    'reservationUtilisateur.id' => 'exact',
+    'reservationAnnonce.id' => 'exact',
 ])]
 #[ApiFilter(DateFilter::class, properties: ['dateDebut', 'dateFin'])]
 #[ApiFilter(OrderFilter::class, properties: ['dateDebut', 'dateFin'], arguments: ['orderParameterName' => 'order'])]
@@ -87,14 +87,14 @@ class Reservation
 
     #[Groups(['reservation:read', 'reservation:write'])]
     #[ORM\ManyToOne(inversedBy: 'reservations')]
-    private ?Annonce $reservation_annonce = null;
+    private ?Annonce $reservationAnnonce = null;
 
     #[Groups(['reservation:read', 'reservation:write'])]
     #[ORM\ManyToOne(inversedBy: 'reservations')]
-    private ?Utilisateur $reservation_utilisateur = null;
+    private ?Utilisateur $reservationUtilisateur = null;
 
     // Pas besoin d'exposer les commentaires ici sauf si tu veux
-    #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'commentaire_reservation')]
+    #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'commentaireReservation')]
     private Collection $commentaires;
 
     public function __construct()
@@ -170,12 +170,12 @@ class Reservation
 
     public function getReservationAnnonce(): ?Annonce
     {
-        return $this->reservation_annonce;
+        return $this->reservationAnnonce;
     }
 
-    public function setReservationAnnonce(?Annonce $reservation_annonce): static
+    public function setReservationAnnonce(?Annonce $reservationAnnonce): static
     {
-        $this->reservation_annonce = $reservation_annonce;
+        $this->reservationAnnonce = $reservationAnnonce;
 
         return $this;
     }
@@ -212,12 +212,12 @@ class Reservation
 
     public function getReservationUtilisateur(): ?Utilisateur
     {
-        return $this->reservation_utilisateur;
+        return $this->reservationUtilisateur;
     }
 
-    public function setReservationUtilisateur(?Utilisateur $reservation_utilisateur): static
+    public function setReservationUtilisateur(?Utilisateur $reservationUtilisateur): static
     {
-        $this->reservation_utilisateur = $reservation_utilisateur;
+        $this->reservationUtilisateur = $reservationUtilisateur;
 
         return $this;
     }

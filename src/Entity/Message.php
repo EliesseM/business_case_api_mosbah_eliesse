@@ -70,13 +70,13 @@ class Message
     #[Context([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d'])]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'messages')]
+    #[ORM\ManyToOne(inversedBy: 'messagesRecceiver')]
     #[Groups(['message:read', 'message:write'])]
-    private ?Utilisateur $message_receiver = null;
+    private ?Utilisateur $messageReceiver = null;
 
-    #[ORM\ManyToOne(inversedBy: 'messagesend')]
+    #[ORM\ManyToOne(inversedBy: 'messageSender')]
     #[Groups(['message:read', 'message:write'])]
-    private ?Utilisateur $message_sender = null;
+    private ?Utilisateur $messageSender = null;
 
     public function getId(): ?int
     {
@@ -109,24 +109,24 @@ class Message
 
     public function getMessageReceiver(): ?Utilisateur
     {
-        return $this->message_receiver;
+        return $this->messageReceiver;
     }
 
-    public function setMessageReceiver(?Utilisateur $message_receiver): static
+    public function setMessageReceiver(?Utilisateur $messageReceiver): static
     {
-        $this->message_receiver = $message_receiver;
+        $this->messageReceiver = $messageReceiver;
 
         return $this;
     }
 
     public function getMessageSender(): ?Utilisateur
     {
-        return $this->message_sender;
+        return $this->messageSender;
     }
 
-    public function setMessageSender(?Utilisateur $message_sender): static
+    public function setMessageSender(?Utilisateur $messageSender): static
     {
-        $this->message_sender = $message_sender;
+        $this->messageSender = $messageSender;
 
         return $this;
     }

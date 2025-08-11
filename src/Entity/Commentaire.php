@@ -78,11 +78,11 @@ class Commentaire
 
     #[ORM\ManyToOne(inversedBy: 'commentaires')]
     #[Groups(['commentaire:read', 'commentaire:write'])]
-    private ?Utilisateur $commentaire_utilisateur = null;
+    private ?Utilisateur $commentaireUtilisateur = null;
 
     #[ORM\ManyToOne(inversedBy: 'commentaires')]
     #[Groups(['commentaire:read', 'commentaire:write'])]
-    private ?Reservation $commentaire_reservation = null;
+    private ?Reservation $commentaireReservation = null;
 
     // Getters & Setters
 
@@ -126,23 +126,23 @@ class Commentaire
 
     public function getCommentaireUtilisateur(): ?Utilisateur
     {
-        return $this->commentaire_utilisateur;
+        return $this->commentaireUtilisateur;
     }
 
-    public function setCommentaireUtilisateur(?Utilisateur $commentaire_utilisateur): static
+    public function setCommentaireUtilisateur(?Utilisateur $commentaireUtilisateur): static
     {
-        $this->commentaire_utilisateur = $commentaire_utilisateur;
+        $this->commentaireUtilisateur = $commentaireUtilisateur;
         return $this;
     }
 
     public function getCommentaireReservation(): ?Reservation
     {
-        return $this->commentaire_reservation;
+        return $this->commentaireReservation;
     }
 
-    public function setCommentaireReservation(?Reservation $commentaire_reservation): static
+    public function setCommentaireReservation(?Reservation $commentaireReservation): static
     {
-        $this->commentaire_reservation = $commentaire_reservation;
+        $this->commentaireReservation = $commentaireReservation;
         return $this;
     }
 }

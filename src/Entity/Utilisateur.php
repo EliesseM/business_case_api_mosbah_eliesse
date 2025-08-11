@@ -13,6 +13,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Put;
 use App\Repository\UtilisateurRepository;
+use App\State\UtilisateurPasswordHasherProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -43,8 +44,9 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
 
         new Post(
-            security: "is_granted('ROLE_ADMIN')",
-            denormalizationContext: ['groups' => ['user:create']]
+            security: "is_granted('PUBLIC_ACCESS')",
+            denormalizationContext: ['groups' => ['user:create']],
+            processor: UtilisateurPasswordHasherProcessor::class
         ),
 
         new Put(
@@ -73,6 +75,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private ?int $id = null;
 
+
     /**
      * @var array<int, string>
      */
@@ -81,36 +84,36 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     private array $roles = [];
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Groups(['user:read', 'user:write', 'user:patch', 'reservation:read'])]
+    #[Groups(['user:read', 'user:create', 'user:write', 'user:patch', 'reservation:read'])]
     #[Assert\NotBlank]
     private ?string $username = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:read', 'user:write', 'user:patch'])]
+    #[Groups(['user:read', 'user:create', 'user:write', 'user:patch'])]
     private ?string $genre = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:read', 'user:write', 'user:patch'])]
+    #[Groups(['user:read', 'user:create', 'user:write', 'user:patch'])]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:read', 'user:write', 'user:patch', 'reservation:read'])]
+    #[Groups(['user:read', 'user:create', 'user:write', 'user:patch', 'reservation:read'])]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Groups(['user:read', 'user:write', 'user:patch'])]
+    #[Groups(['user:read', 'user:create', 'user:write', 'user:patch'])]
     #[Assert\NotBlank(message: "L'email est obligatoire.")]
     #[Assert\Email(message: "Format d'email invalide.")]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:write'])]
+    #[Groups(['user:write', 'user:create'])]
     #[Assert\Length(min: 8, minMessage: "Le mot de passe doit contenir au moins {{ limit }} caractères.")]
     private ?string $password = null;
 
     #[ORM\Column(type: 'datetime')]
     #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y'])]
-    #[Groups(['user:read', 'user:write', 'user:patch'])]
+    #[Groups(['user:read', 'user:create', 'user:write', 'user:patch'])]
     #[Assert\NotNull]
     #[Assert\LessThan('today', message: "La date de naissance doit être dans le passé.")]
     private ?\DateTime $dateNaissance = null;
@@ -125,33 +128,33 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     private bool $isVerified = false;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:read', 'user:write', 'user:patch'])]
+    #[Groups(['user:read', 'user:create', 'user:write', 'user:patch'])]
     private ?string $profilPicture = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:read', 'user:write', 'user:patch'])]
+    #[Groups(['user:read', 'user:create', 'user:write', 'user:patch'])]
     private ?string $billingAdress = null;
 
     /**
      * Relations en lecture seule pour éviter les modifications via cette entité.
      */
 
-    #[ORM\OneToMany(targetEntity: Annonce::class, mappedBy: 'annonce_utilisateur')]
+    #[ORM\OneToMany(targetEntity: Annonce::class, mappedBy: 'annonceUtilisateur')]
     private Collection $annonces;
 
-    #[ORM\OneToMany(targetEntity: Logement::class, mappedBy: 'logement_utilisateur')]
+    #[ORM\OneToMany(targetEntity: Logement::class, mappedBy: 'logementUtilisateur')]
     private Collection $logements;
 
-    #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'commentaire_utilisateur')]
+    #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'commentaireUtilisateur')]
     private Collection $commentaires;
 
-    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'message_receiver')]
-    private Collection $messages;
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'message>Receiver')]
+    private Collection $messagesReceiver;
 
-    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'message_sender')]
-    private Collection $messagesend;
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'messageSender')]
+    private Collection $messageSender;
 
-    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'reservation_utilisateur')]
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'reservations')]
     private Collection $reservations;
 
     public function __construct()
@@ -159,8 +162,8 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         $this->annonces = new ArrayCollection();
         $this->logements = new ArrayCollection();
         $this->commentaires = new ArrayCollection();
-        $this->messages = new ArrayCollection();
-        $this->messagesend = new ArrayCollection();
+        $this->messagesReceiver = new ArrayCollection();
+        $this->messageSender = new ArrayCollection();
         $this->reservations = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
     }
@@ -333,13 +336,13 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     /** @return Collection<int, Message> */
     public function getMessages(): Collection
     {
-        return $this->messages;
+        return $this->messagesReceiver;
     }
 
     /** @return Collection<int, Message> */
-    public function getMessagesend(): Collection
+    public function getMessageSenT(): Collection
     {
-        return $this->messagesend;
+        return $this->messageSender;
     }
 
     /** @return Collection<int, Reservation> */

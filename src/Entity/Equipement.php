@@ -43,7 +43,7 @@ use Doctrine\ORM\Mapping as ORM;
 )]
 #[ApiFilter(SearchFilter::class, properties: [
     'nom' => 'partial',
-    'logement_equipement.id' => 'exact',
+    'logementEquipement.id' => 'exact',
 ])]
 #[ApiFilter(OrderFilter::class, properties: ['nom'], arguments: ['orderParameterName' => 'order'])]
 class Equipement
@@ -62,6 +62,7 @@ class Equipement
     #[Groups(['equipement:read', 'equipement:write'])]
     private ?string $description = null;
 
+    #[ORM\Column(nullable: true)]
     #[ORM\ManyToMany(targetEntity: Logement::class, mappedBy: 'equipements')]
     #[Groups(['equipement:read'])]
     private Collection $logements;

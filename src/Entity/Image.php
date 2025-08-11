@@ -58,9 +58,10 @@ class Image
     #[Groups(['image:list', 'image:read', 'image:write'])]
     private ?string $path = null;
 
+    #[ORM\Column(nullable: true)]
     #[ORM\ManyToOne(inversedBy: 'images')]
     #[Groups(['image:read', 'image:write'])]
-    private ?Logement $logement_image = null;
+    private ?Logement $logementImage = null;
 
     public function getId(): ?int
     {
@@ -80,12 +81,12 @@ class Image
 
     public function getLogementImage(): ?Logement
     {
-        return $this->logement_image;
+        return $this->logementImage;
     }
 
-    public function setLogementImage(?Logement $logement_image): static
+    public function setLogementImage(?Logement $logementImage): static
     {
-        $this->logement_image = $logement_image;
+        $this->logementImage = $logementImage;
         return $this;
     }
 }

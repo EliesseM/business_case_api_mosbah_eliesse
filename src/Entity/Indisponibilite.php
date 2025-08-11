@@ -77,7 +77,7 @@ class Indisponibilite
 
     #[ORM\ManyToOne(inversedBy: 'indisponibilites')]
     #[Groups(['indisponibilite:read', 'indisponibilite:write'])]
-    private ?Annonce $annonce_indisponibilite = null;
+    private ?Annonce $annonceIndisponibilite = null;
 
     public function getId(): ?int
     {
@@ -122,12 +122,12 @@ class Indisponibilite
 
     public function getAnnonceIndisponibilite(): ?Annonce
     {
-        return $this->annonce_indisponibilite;
+        return $this->annonceIndisponibilite;
     }
 
-    public function setAnnonceIndisponibilite(?Annonce $annonce_indisponibilite): static
+    public function setAnnonceIndisponibilite(?Annonce $annonceIndisponibilite): static
     {
-        $this->annonce_indisponibilite = $annonce_indisponibilite;
+        $this->annonceIndisponibilite = $annonceIndisponibilite;
 
         return $this;
     }

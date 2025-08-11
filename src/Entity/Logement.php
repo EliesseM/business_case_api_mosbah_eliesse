@@ -13,6 +13,7 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\GetCollection;
+use App\State\LogementPostProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -31,7 +32,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
             security: "is_granted('ROLE_USER')"
         ),
         new Post(
+            processor: LogementPostProcessor::class,
             security: "is_granted('ROLE_USER')"
+
         ),
         new Put(
             security: "is_granted('ROLE_USER') and object.getLogementUtilisateur() == user"
@@ -97,22 +100,24 @@ class Logement
     #[ORM\Column]
     #[Groups(['logement:list', 'logement:read', 'logement:write'])]
     private ?float $superficie = null;
-
+    #[ORM\column(nullable: true)]
     #[ORM\ManyToMany(targetEntity: Equipement::class, inversedBy: 'logements')]
     #[Groups(['logement:read', 'logement:write'])]
     private Collection $equipements;
 
-    #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'logement_image', cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\column(nullable: true)]
+    #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'logementImage', cascade: ['persist'], orphanRemoval: true)]
     #[Groups(['logement:read', 'logement:write'])]
     private Collection $images;
 
-    #[ORM\OneToMany(targetEntity: Annonce::class, mappedBy: 'annonce_logement', cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\column(nullable: true)]
+    #[ORM\OneToMany(targetEntity: Annonce::class, mappedBy: 'annonceLogement', cascade: ['persist'], orphanRemoval: true)]
     #[Groups(['logement:read', 'logement:write'])]
     private Collection $annonces;
 
     #[ORM\ManyToOne(inversedBy: 'logements')]
     #[Groups(['logement:read', 'logement:write'])]
-    private ?Utilisateur $logement_utilisateur = null;
+    private ?Utilisateur $logementUtilisateur = null;
 
     public function __construct()
     {
@@ -305,12 +310,12 @@ class Logement
 
     public function getLogementUtilisateur(): ?Utilisateur
     {
-        return $this->logement_utilisateur;
+        return $this->logementUtilisateur;
     }
 
-    public function setLogementUtilisateur(?Utilisateur $logement_utilisateur): static
+    public function setLogementUtilisateur(?Utilisateur $logementUtilisateur): static
     {
-        $this->logement_utilisateur = $logement_utilisateur;
+        $this->logementUtilisateur = $logementUtilisateur;
         return $this;
     }
 }

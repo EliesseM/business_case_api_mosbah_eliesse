@@ -14,6 +14,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\AnnonceRepository;
+use App\State\AnnoncePostProcessor;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Serializer\Annotation\Context;
@@ -22,6 +23,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Webmozart\Assert\Assert;
 
 
 
@@ -32,7 +34,10 @@ use Doctrine\ORM\Mapping as ORM;
     operations: [
         new Get(security: "is_granted('ROLE_USER')"),
         new GetCollection(security: "is_granted('ROLE_USER')"),
-        new Post(security: "is_granted('ROLE_USER')"),
+        new Post(
+            processor: AnnoncePostProcessor::class,
+            security: "is_granted('ROLE_USER')"
+        ),
         new Put(security: "is_granted('ROLE_USER')"),
         new Delete(security: "is_granted('ROLE_ADMIN') or object.getAnnonceUtilisateur() == user"),
     ]
@@ -71,6 +76,11 @@ class Annonce
 
     #[ORM\Column]
     #[Groups(['annonce:read', 'annonce:write'])]
+    #[Assert(
+        min: 1,
+        max: 10,
+        notInRangeMessage: "Le nombre de places doit être entre {{ min }} et {{ max }}."
+    )]
     private ?int $nbPlaces = null;
 
     #[ORM\Column]
@@ -81,19 +91,21 @@ class Annonce
     #[Groups(['annonce:read', 'annonce:write'])]
     private Collection $services;
 
-    #[ORM\OneToMany(targetEntity: Indisponibilite::class, mappedBy: 'annonce_indisponibilite')]
+    #[ORM\OneToMany(targetEntity: Indisponibilite::class, mappedBy: 'annonceIndisponibilite')]
     #[Groups(['annonce:read'])]
     private Collection $indisponibilites;
 
-    #[ORM\ManyToOne(inversedBy: 'annonces')]
-    #[Groups(['annonce:read', 'annonce:write'])]
-    private ?Logement $annonce_logement = null;
 
     #[ORM\ManyToOne(inversedBy: 'annonces')]
     #[Groups(['annonce:read', 'annonce:write'])]
-    private ?Utilisateur $annonce_utilisateur = null;
+    private ?Logement $annonceLogement = null;
 
-    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'reservation_annonce')]
+
+    #[ORM\ManyToOne(inversedBy: 'annonces')]
+    #[Groups(['annonce:read', 'annonce:write'])]
+    private ?Utilisateur $annonceUtilisateur = null;
+
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'reservations')]
     #[Groups(['annonce:read'])]
     private Collection $reservations;
 
@@ -237,23 +249,23 @@ class Annonce
 
     public function getAnnonceLogement(): ?Logement
     {
-        return $this->annonce_logement;
+        return $this->annonceLogement;
     }
 
-    public function setAnnonceLogement(?Logement $annonce_logement): static
+    public function setAnnonceLogement(?Logement $annonceLogement): static
     {
-        $this->annonce_logement = $annonce_logement;
+        $this->annonceLogement = $annonceLogement;
         return $this;
     }
 
     public function getAnnonceUtilisateur(): ?Utilisateur
     {
-        return $this->annonce_utilisateur;
+        return $this->annonceUtilisateur;
     }
 
-    public function setAnnonceUtilisateur(?Utilisateur $annonce_utilisateur): static
+    public function setAnnonceUtilisateur(?Utilisateur $annonceUtilisateur): static
     {
-        $this->annonce_utilisateur = $annonce_utilisateur;
+        $this->annonceUtilisateur = $annonceUtilisateur;
         return $this;
     }
 
