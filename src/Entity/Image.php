@@ -12,6 +12,7 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -31,6 +32,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Post(
             denormalizationContext: ['groups' => ['image:write']],
             security: "is_granted('ROLE_USER')"
+        ),
+
+        new Patch(
+            security: "is_granted('ROLE_USER') and object.getLogementImage().getLogementUtilisateur() == user",
         ),
         new Put(
             security: "is_granted('ROLE_USER') and object.getLogementImage().getLogementUtilisateur() == user",

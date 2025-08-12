@@ -60,7 +60,7 @@ class AppFixtures extends Fixture
                 ->setCreatedAt(new \DateTimeImmutable())
                 ->setIsVerified($faker->boolean(80))
                 ->setProfilPicture($faker->imageUrl(200, 200, 'people'))
-                ->setBillingAdress($faker->address())
+                ->setBillingAddress($faker->address())
                 ->setRoles(array_unique($roles));
 
             $manager->persist($utilisateur);
@@ -84,7 +84,7 @@ class AppFixtures extends Fixture
                 ->setCreatedAt(new \DateTimeImmutable())
                 ->setIsVerified($userData['isVerified'] ?? false)
                 ->setProfilPicture($userData['profilPicture'] ?? null)
-                ->setBillingAdress($userData['billingAdress'] ?? null)
+                ->setBillingAddress($userData['billingAdress'] ?? null)
                 ->setRoles($userData['roles'] ?? ['ROLE_USER']);
 
             $manager->persist($utilisateur);

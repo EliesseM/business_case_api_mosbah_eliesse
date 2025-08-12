@@ -13,6 +13,7 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
 use App\State\LogementPostProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -35,6 +36,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
             processor: LogementPostProcessor::class,
             security: "is_granted('ROLE_USER')"
 
+        ),
+        new Patch(
+            security: "is_granted('ROLE_USER') and object.getLogementUtilisateur() == user"
         ),
         new Put(
             security: "is_granted('ROLE_USER') and object.getLogementUtilisateur() == user"

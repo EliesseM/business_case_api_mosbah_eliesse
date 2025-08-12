@@ -6,53 +6,43 @@ use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\MessageRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Delete;
-use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Put;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => ['image:read']],
-    denormalizationContext: ['groups' => ['image:write']],
+    normalizationContext: ['groups' => ['message:read']],
+    denormalizationContext: ['groups' => ['message:write']],
     operations: [
-        new Get(
-            normalizationContext: ['groups' => ['image:read']],
-            security: "is_granted('ROLE_USER')"
-        ),
-        new GetCollection(
-            normalizationContext: ['groups' => ['image:list']],
-            security: "is_granted('ROLE_USER')"
-        ),
+        new Get(security: "is_granted('ROLE_USER') and (object.getMessageSender() == user or object.getMessageReceiver() == user)", securityMessage: "Vous ne pouvez voir que vos messages."),
+        new GetCollection(security: "is_granted('ROLE_USER')"),
         new Post(
-            denormalizationContext: ['groups' => ['image:write']],
+            normalizationContext: ['groups' => ['message:read:item']],
+            denormalizationContext: ['groups' => ['message:write']],
             security: "is_granted('ROLE_USER')"
         ),
-        new Put(
-            denormalizationContext: ['groups' => ['image:write']],
-            security: "is_granted('ROLE_USER')"
-        ),
-        new Delete(
-            security: "is_granted('ROLE_USER')"
-        )
+
+        new Put(security: "is_granted('ROLE_USER') and object.getMessageSender() == user", securityMessage: "Vous ne pouvez modifier que vos propres messages."),
+        new Delete(security: "is_granted('ROLE_USER') and (object.getMessageSender() == user or object.getMessageReceiver() == user)", securityMessage: "Vous ne pouvez supprimer que vos propres messages.")
     ]
 )]
 #[ApiFilter(SearchFilter::class, properties: [
-    'expediteur.id' => 'exact',
-    'destinataire.id' => 'exact',
+    'messageSender.id' => 'exact',
+    'messageReceiver.id' => 'exact',
     'contenu' => 'partial',
 ])]
-#[ApiFilter(DateFilter::class, properties: ['dateEnvoi'])]
-#[ApiFilter(OrderFilter::class, properties: ['dateEnvoi'], arguments: ['orderParameterName' => 'order'])]
-
+#[ApiFilter(DateFilter::class, properties: ['createdAt'])]
+#[ApiFilter(OrderFilter::class, properties: ['createdAt'], arguments: ['orderParameterName' => 'order'])]
 class Message
 {
     #[ORM\Id]
@@ -67,16 +57,21 @@ class Message
 
     #[ORM\Column]
     #[Groups(['message:read'])]
-    #[Context([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d'])]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y'])]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'messagesRecceiver')]
+    #[ORM\ManyToOne(inversedBy: 'messagesReceived')]
     #[Groups(['message:read', 'message:write'])]
     private ?Utilisateur $messageReceiver = null;
 
-    #[ORM\ManyToOne(inversedBy: 'messageSender')]
+    #[ORM\ManyToOne(inversedBy: 'messagesSent')]
     #[Groups(['message:read', 'message:write'])]
     private ?Utilisateur $messageSender = null;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
@@ -91,7 +86,6 @@ class Message
     public function setContenu(string $contenu): static
     {
         $this->contenu = $contenu;
-
         return $this;
     }
 
@@ -103,7 +97,6 @@ class Message
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
-
         return $this;
     }
 
@@ -115,7 +108,6 @@ class Message
     public function setMessageReceiver(?Utilisateur $messageReceiver): static
     {
         $this->messageReceiver = $messageReceiver;
-
         return $this;
     }
 
@@ -127,7 +119,6 @@ class Message
     public function setMessageSender(?Utilisateur $messageSender): static
     {
         $this->messageSender = $messageSender;
-
         return $this;
     }
 }

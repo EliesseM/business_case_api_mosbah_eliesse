@@ -20,27 +20,22 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ServiceRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => ['user:read']],
-    denormalizationContext: ['groups' => ['user:write']],
+    normalizationContext: ['groups' => ['service:read']],
+    denormalizationContext: ['groups' => ['service:write']],
     operations: [
         new GetCollection(
             security: "is_granted('ROLE_USER')",
-            normalizationContext: ['groups' => ['service:read']],
             paginationEnabled: true,
             paginationItemsPerPage: 10
         ),
         new Get(
-            security: "is_granted('ROLE_USER')",
-            normalizationContext: ['groups' => ['service:read']]
+            security: "is_granted('ROLE_USER')"
         ),
         new Post(
-            security: "is_granted('ROLE_ADMIN')",
-            denormalizationContext: ['groups' => ['service:write']]
+            security: "is_granted('ROLE_ADMIN')"
         ),
-
         new Put(
-            security: "is_granted('ROLE_ADMIN')",
-            denormalizationContext: ['groups' => ['service:write']]
+            security: "is_granted('ROLE_ADMIN')"
         ),
         new Delete(
             security: "is_granted('ROLE_ADMIN')"
@@ -52,28 +47,25 @@ use Symfony\Component\Serializer\Annotation\Groups;
     'annonces.id' => 'exact',
 ])]
 #[ApiFilter(OrderFilter::class, properties: ['nom'], arguments: ['orderParameterName' => 'order'])]
-
 class Service
 {
-    #[Groups(['service:read'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['service:read'])]
     private ?int $id = null;
 
-    #[Groups(['service:read', 'service:write'])]
     #[ORM\Column(length: 255)]
+    #[Groups(['service:read', 'service:write'])]
     private ?string $nom = null;
 
-    #[Groups(['service:read', 'service:write'])]
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['service:read', 'service:write'])]
     private ?string $description = null;
 
-    /**
-     * @var Collection<int, Annonce>
-     */
-    #[Groups(['service:read'])]
+    /** @var Collection<int, Annonce> */
     #[ORM\ManyToMany(targetEntity: Annonce::class, mappedBy: 'services')]
+    #[Groups(['service:read'])]
     private Collection $annonces;
 
     public function __construct()
@@ -94,7 +86,6 @@ class Service
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
-
         return $this;
     }
 
@@ -106,13 +97,10 @@ class Service
     public function setDescription(string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Annonce>
-     */
+    /** @return Collection<int, Annonce> */
     public function getAnnonces(): Collection
     {
         return $this->annonces;
@@ -124,7 +112,6 @@ class Service
             $this->annonces->add($annonce);
             $annonce->addService($this);
         }
-
         return $this;
     }
 
@@ -133,7 +120,6 @@ class Service
         if ($this->annonces->removeElement($annonce)) {
             $annonce->removeService($this);
         }
-
         return $this;
     }
 }

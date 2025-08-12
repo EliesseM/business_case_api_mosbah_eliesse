@@ -17,6 +17,7 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 
@@ -33,13 +34,19 @@ use ApiPlatform\Metadata\Put;
             normalizationContext: ['groups' => ['commentaire:list']],
             security: "is_granted('ROLE_USER')"
         ),
+        new Patch(
+            denormalizationContext: ['groups' => ['commentaire:write']],
+            security: "is_granted('ROLE_USER') and object.getCommentaireUtilisateur() == user",
+            securityMessage: "Vous ne pouvez modifier que vos propres commentaires."
+        ),
         new Post(
             denormalizationContext: ['groups' => ['commentaire:write']],
             security: "is_granted('ROLE_USER')"
         ),
         new Put(
             denormalizationContext: ['groups' => ['commentaire:write']],
-            security: "is_granted('ROLE_USER')"
+            security: "is_granted('ROLE_USER') and object.getCommentaireUtilisateur() == user",
+            securityMessage: "Vous ne pouvez modifier que vos propres commentaires."
         ),
         new Delete(
             security: "is_granted('ROLE_ADMIN') or object.getCommentaireUtilisateur() == user"

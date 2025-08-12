@@ -32,6 +32,12 @@ use Doctrine\ORM\Mapping as ORM;
             denormalizationContext: ['groups' => ['equipement:write']],
             security: "is_granted('ROLE_ADMIN')"
         ),
+
+        new \ApiPlatform\Metadata\Patch(
+            denormalizationContext: ['groups' => ['equipement:write']],
+            security: "is_granted('ROLE_ADMIN')"
+        ),
+
         new \ApiPlatform\Metadata\Put(
             denormalizationContext: ['groups' => ['equipement:write']],
             security: "is_granted('ROLE_ADMIN')"

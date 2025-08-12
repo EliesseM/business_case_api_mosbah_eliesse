@@ -25,8 +25,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[UniqueEntity('email', message: 'Cet email est déjà utilisé')]
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
+#[UniqueEntity('email', message: 'Cet email est déjà utilisé')]
 #[ApiResource(
     normalizationContext: ['groups' => ['user:read']],
     denormalizationContext: ['groups' => ['user:write']],
@@ -37,29 +37,24 @@ use Symfony\Component\Validator\Constraints as Assert;
             paginationEnabled: true,
             paginationItemsPerPage: 10
         ),
-
         new Get(
             security: "is_granted('ROLE_ADMIN') or object == user",
             normalizationContext: ['groups' => ['user:read', 'user:item']]
         ),
-
         new Post(
             name: 'create_user',
             security: "is_granted('PUBLIC_ACCESS')",
             denormalizationContext: ['groups' => ['user:create']],
             processor: UtilisateurPasswordHasherProcessor::class
         ),
-
         new Patch(
             security: "is_granted('ROLE_ADMIN') or object == user",
             denormalizationContext: ['groups' => ['user:update']]
         ),
-
         new Put(
             security: "is_granted('ROLE_ADMIN') or object == user",
             denormalizationContext: ['groups' => ['user:update']]
         ),
-
         new Delete(
             security: "is_granted('ROLE_ADMIN')"
         )
@@ -72,7 +67,6 @@ use Symfony\Component\Validator\Constraints as Assert;
     'roles' => 'partial',
 ])]
 #[ApiFilter(OrderFilter::class, properties: ['email', 'nom'], arguments: ['orderParameterName' => 'order'])]
-
 class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -81,47 +75,46 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private ?int $id = null;
 
-
-    /**
-     * @var array<int, string>
-     */
     #[ORM\Column]
     #[Groups(['user:read'])]
     private array $roles = [];
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Groups(['user:read', 'user:create', 'user:write', 'user:patch', 'reservation:read'])]
+    #[Groups(['user:read', 'user:create', 'user:write'])]
     #[Assert\NotBlank]
     private ?string $username = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:read', 'user:create', 'user:write', 'user:patch'])]
+    #[Groups(['user:read', 'user:create', 'user:write'])]
     private ?string $genre = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:read', 'user:create', 'user:write', 'user:patch'])]
+    #[Groups(['user:read', 'user:create', 'user:write'])]
+    #[Assert\NotBlank]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:read', 'user:create', 'user:write', 'user:patch', 'reservation:read'])]
+    #[Groups(['user:read', 'user:create', 'user:write'])]
+    #[Assert\NotBlank]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Groups(['user:read', 'user:create', 'user:write', 'user:patch'])]
-    #[Assert\NotBlank(message: "L'email est obligatoire.")]
-    #[Assert\Email(message: "Format d'email invalide.")]
+    #[Groups(['user:read', 'user:create', 'user:write'])]
+    #[Assert\NotBlank]
+    #[Assert\Email]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:write', 'user:create'])]
-    #[Assert\Length(min: 8, minMessage: "Le mot de passe doit contenir au moins {{ limit }} caractères.")]
+    #[Groups(['user:create', 'user:write'])]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 8)]
     private ?string $password = null;
 
     #[ORM\Column(type: 'datetime')]
     #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y'])]
-    #[Groups(['user:read', 'user:create', 'user:write', 'user:patch'])]
+    #[Groups(['user:read', 'user:create', 'user:write'])]
     #[Assert\NotNull]
-    #[Assert\LessThan('today', message: "La date de naissance doit être dans le passé.")]
+    #[Assert\LessThan('today')]
     private ?\DateTime $dateNaissance = null;
 
     #[ORM\Column(type: 'datetime_immutable')]
@@ -134,16 +127,12 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     private bool $isVerified = false;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:read', 'user:create', 'user:write', 'user:patch'])]
+    #[Groups(['user:read', 'user:create', 'user:write'])]
     private ?string $profilPicture = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:read', 'user:create', 'user:write', 'user:patch'])]
-    private ?string $billingAdress = null;
-
-    /**
-     * Relations en lecture seule pour éviter les modifications via cette entité.
-     */
+    #[Groups(['user:read', 'user:create', 'user:write'])]
+    private ?string $billingAddress = null;
 
     #[ORM\OneToMany(targetEntity: Annonce::class, mappedBy: 'annonceUtilisateur')]
     private Collection $annonces;
@@ -154,13 +143,13 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'commentaireUtilisateur')]
     private Collection $commentaires;
 
-    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'message>Receiver')]
-    private Collection $messagesReceiver;
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'messageReceiver')]
+    private Collection $messagesReceived;
 
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'messageSender')]
-    private Collection $messageSender;
+    private Collection $messagesSent;
 
-    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'reservations')]
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'utilisateur')]
     private Collection $reservations;
 
     public function __construct()
@@ -168,13 +157,11 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         $this->annonces = new ArrayCollection();
         $this->logements = new ArrayCollection();
         $this->commentaires = new ArrayCollection();
-        $this->messagesReceiver = new ArrayCollection();
-        $this->messageSender = new ArrayCollection();
+        $this->messagesReceived = new ArrayCollection();
+        $this->messagesSent = new ArrayCollection();
         $this->reservations = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
     }
-
-    // Getters & Setters
 
     public function getId(): ?int
     {
@@ -185,7 +172,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = $this->roles;
         $roles[] = 'ROLE_USER';
-
         return array_unique($roles);
     }
 
@@ -310,14 +296,14 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getBillingAdress(): ?string
+    public function getBillingAddress(): ?string
     {
-        return $this->billingAdress;
+        return $this->billingAddress;
     }
 
-    public function setBillingAdress(?string $billingAdress): self
+    public function setBillingAddress(?string $billingAddress): self
     {
-        $this->billingAdress = $billingAdress;
+        $this->billingAddress = $billingAddress;
         return $this;
     }
 
@@ -340,15 +326,15 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /** @return Collection<int, Message> */
-    public function getMessages(): Collection
+    public function getMessagesReceived(): Collection
     {
-        return $this->messagesReceiver;
+        return $this->messagesReceived;
     }
 
     /** @return Collection<int, Message> */
-    public function getMessageSenT(): Collection
+    public function getMessagesSent(): Collection
     {
-        return $this->messageSender;
+        return $this->messagesSent;
     }
 
     /** @return Collection<int, Reservation> */
@@ -357,8 +343,5 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->reservations;
     }
 
-    public function eraseCredentials(): void
-    {
-        // Clear sensitive data if needed
-    }
+    public function eraseCredentials(): void {}
 }
