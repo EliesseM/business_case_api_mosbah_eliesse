@@ -35,9 +35,7 @@ class AppFixtures extends Fixture
 
         $faker = Factory::create('fr_FR');
 
-        /**
-         * UTILISATEURS
-         */
+        //  UTILISATEURS
 
         $utilisateurs = [];
         for ($i = 0; $i < 20; $i++) {
@@ -90,9 +88,7 @@ class AppFixtures extends Fixture
             $manager->persist($utilisateur);
         }
 
-        /**
-         * LOGEMENTS
-         */
+        //  LOGEMENTS
         $logements = [];
         for ($i = 0; $i < 15; $i++) {
             $logement = new Logement();
@@ -113,9 +109,7 @@ class AppFixtures extends Fixture
             $logements[] = $logement;
         }
 
-        /**
-         * SERVICES
-         */
+        //  SERVICES
         $services = [];
         for ($i = 0; $i < 5; $i++) {
             $service = new Service();
@@ -127,9 +121,7 @@ class AppFixtures extends Fixture
             $services[] = $service;
         }
 
-        /**
-         * ANNONCES
-         */
+        // ANNONCES
         $annonces = [];
         for ($i = 0; $i < 30; $i++) {
             $annonce = new Annonce();
@@ -150,9 +142,7 @@ class AppFixtures extends Fixture
             $annonces[] = $annonce;
         }
 
-        /**
-         * RESERVATIONS
-         */
+        // RESERVATIONS
         $reservations = [];
         for ($i = 0; $i < 20; $i++) {
             $dateDebut = $faker->dateTimeBetween('now', '+1 month');
@@ -172,9 +162,7 @@ class AppFixtures extends Fixture
             $reservations[] = $reservation;
         }
 
-        /**
-         * COMMENTAIRES
-         */
+        // COMMENTAIRES
         $commentaires = $faker->randomElement($commentaires);
         $commentaire = new Commentaire();
         $commentaire
@@ -187,9 +175,7 @@ class AppFixtures extends Fixture
         $manager->persist($commentaire);
 
 
-        /**
-         * EQUIPEMENTS
-         */
+        // EQUIPEMENTS
         for ($i = 0; $i < 10; $i++) {
             $equipement = new Equipement();
             $equipement
@@ -200,9 +186,8 @@ class AppFixtures extends Fixture
             $manager->persist($equipement);
         }
 
-        /**
-         * IMAGES
-         */
+        //IMAGES
+
         for ($i = 0; $i < 20; $i++) {
             $image = new Image();
             $image
@@ -212,9 +197,8 @@ class AppFixtures extends Fixture
             $manager->persist($image);
         }
 
-        /**
-         * INDISPONIBILITES
-         */
+        //INDISPONIBILITES
+
         for ($i = 0; $i < 10; $i++) {
             $dateDebut = $faker->dateTimeBetween('now', '+2 months');
             $dateFin = (clone $dateDebut)->modify('+' . rand(1, 14) . ' days');
@@ -229,9 +213,7 @@ class AppFixtures extends Fixture
             $manager->persist($indispo);
         }
 
-        /**
-         * MESSAGES
-         */
+        // MESSAGES
         for ($i = 0; $i < 20; $i++) {
             $sender = $faker->randomElement($utilisateurs);
             $receiver = $faker->randomElement(array_filter($utilisateurs, fn($u) => $u !== $sender));
