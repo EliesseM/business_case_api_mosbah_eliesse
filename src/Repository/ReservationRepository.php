@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Annonce;
 use App\Entity\Reservation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -16,28 +17,18 @@ class ReservationRepository extends ServiceEntityRepository
         parent::__construct($registry, Reservation::class);
     }
 
-//    /**
-//     * @return Reservation[] Returns an array of Reservation objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('r')
-//            ->andWhere('r.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('r.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Reservation
-//    {
-//        return $this->createQueryBuilder('r')
-//            ->andWhere('r.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function hasReservation(Annonce $annonce, \DateTimeInterface $dateDebut, \DateTimeInterface $dateFin): bool
+    {
+        return (bool) $this->createQueryBuilder('r')
+            ->select('COUNT(r.id)')
+            ->andWhere('r.reservationAnnonce = :annonce')
+            ->andWhere('r.status = :status') // uniquement les réservations validées
+            ->andWhere('(:dateDebut BETWEEN r.dateDebut AND r.dateFin OR :dateFin BETWEEN r.dateDebut AND r.dateFin)')
+            ->setParameter('annonce', $annonce)
+            ->setParameter('status', 'validee')
+            ->setParameter('dateDebut', $dateDebut)
+            ->setParameter('dateFin', $dateFin)
+            ->getQuery()
+            ->getSingleScalarResult() > 0;
+    }
 }

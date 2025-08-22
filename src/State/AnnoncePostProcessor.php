@@ -19,15 +19,18 @@ class AnnoncePostProcessor implements ProcessorInterface
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): Annonce
     {
+        // Vérification de la cohérence des données
         if (!$data instanceof Annonce || null === $data->getAnnonceLogement()) {
             return $data;
         }
 
+        // Récupération de l'utilisateur connecté
         $utilisateur = $this->security->getUser();
         if (!$utilisateur instanceof Utilisateur) {
             throw new AccessDeniedHttpException('Aucun utilisateur connecté.');
         }
 
+        // Validation : un utilisateur ne peut créer une annonce que pour ses propres logements
         $proprietaire = $data->getAnnonceLogement()->getLogementUtilisateur();
         if ($proprietaire?->getId() !== $utilisateur->getId()) {
             throw new AccessDeniedHttpException('Vous ne pouvez créer une annonce que pour vos propres logements.');
@@ -41,8 +44,10 @@ class AnnoncePostProcessor implements ProcessorInterface
             $this->em->persist($utilisateur);
         }
 
+        // Association de l’annonce à son créateur
         $data->setAnnonceUtilisateur($utilisateur);
 
+        // Persistance en base
         $this->em->persist($data);
         $this->em->flush();
 

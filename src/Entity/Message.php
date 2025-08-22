@@ -13,6 +13,7 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\GetCollection;
 use App\Repository\MessageRepository;
+use App\State\MessagePostProcessor;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Context;
@@ -25,10 +26,11 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
     denormalizationContext: ['groups' => ['message:write']],
     operations: [
         new Get(security: "is_granted('ROLE_USER') and (object.getMessageSender() == user or object.getMessageReceiver() == user)", securityMessage: "Vous ne pouvez voir que vos messages."),
-        new GetCollection(security: "is_granted('ROLE_USER')"),
+        new GetCollection(security: "is_granted('ROLE_USER') and (object.getMessageSender() == user or object.getMessageReceiver() == user)", securityMessage: "Vous ne pouvez voir que vos messages."),
         new Post(
             normalizationContext: ['groups' => ['message:read:item']],
             denormalizationContext: ['groups' => ['message:write']],
+            processor: MessagePostProcessor::class,
             security: "is_granted('ROLE_USER')"
         ),
 

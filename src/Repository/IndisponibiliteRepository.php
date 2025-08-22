@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Annonce;
 use App\Entity\Indisponibilite;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -15,29 +16,16 @@ class IndisponibiliteRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Indisponibilite::class);
     }
-
-//    /**
-//     * @return Indisponibilite[] Returns an array of Indisponibilite objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('i')
-//            ->andWhere('i.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('i.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Indisponibilite
-//    {
-//        return $this->createQueryBuilder('i')
-//            ->andWhere('i.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function hasUnavailability(Annonce $annonce, \DateTimeInterface $dateDebut, \DateTimeInterface $dateFin): bool
+    {
+        return (bool) $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->andWhere('u.annonce = :annonce')
+            ->andWhere('(:dateDebut BETWEEN u.dateDebut AND u.dateFin OR :dateFin BETWEEN u.dateDebut AND u.dateFin)')
+            ->setParameter('annonce', $annonce)
+            ->setParameter('dateDebut', $dateDebut)
+            ->setParameter('dateFin', $dateFin)
+            ->getQuery()
+            ->getSingleScalarResult() > 0;
+    }
 }

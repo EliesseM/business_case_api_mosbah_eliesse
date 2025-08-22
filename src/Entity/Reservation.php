@@ -12,6 +12,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Repository\ReservationRepository;
+use App\State\ReservationPostProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -19,6 +20,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
 #[ApiResource(
@@ -32,7 +34,8 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
             security: "is_granted('ROLE_USER') and object.getReservationUtilisateur() == user"
         ),
         new Post(
-            security: "is_granted('ROLE_USER')"
+            security: "is_granted('ROLE_USER')",
+            processor: ReservationPostProcessor::class
         ),
         new Patch(
             denormalizationContext: ['groups' => ['reservation:patch']],
@@ -89,6 +92,12 @@ class Reservation
     #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'commentaireReservation', cascade: ['persist', 'remove'])]
     #[Groups(['reservation:read'])]
     private Collection $commentaires;
+    // donnée pour calculé la date de fin, exprimée en mois, non stockée en bdd
+    #[Assert\NotNull(message: 'La durée est obligatoire.')]
+    #[Assert\Type('integer', message: 'La durée doit être un entier (mois).')]
+    #[Assert\Range(min: 1, max: 24, notInRangeMessage: 'La durée doit être comprise entre {{ min }} et {{ max }} mois.')]
+    #[Groups(['reservation:write'])]
+    private ?int $duree = null;
 
     public function __construct()
     {
@@ -164,6 +173,18 @@ class Reservation
     public function setReservationAnnonce(?Annonce $reservationAnnonce): static
     {
         $this->reservationAnnonce = $reservationAnnonce;
+        return $this;
+    }
+
+    public function getDuree(): ?int
+    {
+        return $this->duree;
+    }
+
+    public function setDuree(int $duree): static
+    {
+        $this->duree = $duree;
+
         return $this;
     }
 
