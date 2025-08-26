@@ -16,16 +16,19 @@ class IndisponibiliteRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Indisponibilite::class);
     }
-    public function hasUnavailability(Annonce $annonce, \DateTimeInterface $dateDebut, \DateTimeInterface $dateFin): bool
+    public function hasUnavailability(Annonce $annonceIndisponibilite, \DateTimeInterface $dateDebut, \DateTimeInterface $dateFin): bool
     {
-        return (bool) $this->createQueryBuilder('u')
-            ->select('COUNT(u.id)')
-            ->andWhere('u.annonce = :annonce')
-            ->andWhere('(:dateDebut BETWEEN u.dateDebut AND u.dateFin OR :dateFin BETWEEN u.dateDebut AND u.dateFin)')
-            ->setParameter('annonce', $annonce)
+        $qb = $this->createQueryBuilder('i');
+
+        $count = (int) $qb->select('COUNT(i.id)')
+            ->where('i.annonceIndisponibilite = :annonce')
+            ->andWhere('i.dateDebut < :dateFin')
+            ->andWhere('i.dateFin > :dateDebut')
+            ->setParameter('annonce', $annonceIndisponibilite)
             ->setParameter('dateDebut', $dateDebut)
             ->setParameter('dateFin', $dateFin)
             ->getQuery()
-            ->getSingleScalarResult() > 0;
+            ->getSingleScalarResult();
+        return $count > 0;
     }
 }

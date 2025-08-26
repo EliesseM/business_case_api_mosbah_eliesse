@@ -4,6 +4,7 @@ namespace App\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
+use App\Entity\Image;
 use App\Entity\Logement;
 use App\Entity\Utilisateur;
 use Doctrine\ORM\EntityManagerInterface;
@@ -37,6 +38,7 @@ class LogementPostProcessor implements ProcessorInterface
 
         // Assigne le logement à l'utilisateur connecté (propriétaire)
         $data->setLogementUtilisateur($utilisateur);
+
 
         $this->em->persist($data);
         $this->em->flush();

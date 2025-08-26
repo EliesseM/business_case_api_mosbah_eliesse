@@ -116,11 +116,11 @@ class Logement
 
     #[ORM\column(nullable: true)]
     #[ORM\OneToMany(targetEntity: Annonce::class, mappedBy: 'annonceLogement', cascade: ['persist'], orphanRemoval: true)]
-    #[Groups(['logement:read', 'logement:write'])]
+    #[Groups(['logement:read'])]
     private Collection $annonces;
 
     #[ORM\ManyToOne(inversedBy: 'logements')]
-    #[Groups(['logement:read', 'logement:write'])]
+    #[Groups(['logement:read'])]
     private ?Utilisateur $logementUtilisateur = null;
 
     public function __construct()

@@ -110,7 +110,7 @@ class Annonce
 
     #[ORM\ManyToOne(inversedBy: 'annonces')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['annonce:read', 'annonce:write'])]
+    #[Groups(['annonce:read'])]
     private ?Utilisateur $annonceUtilisateur = null;
 
     #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'reservationAnnonce')]
@@ -122,7 +122,7 @@ class Annonce
     private ?string $slug = null;
 
     #[ORM\Column(type: 'boolean')]
-    #[Groups(['annonce:read', 'annonce:write'])]
+    #[Groups(['annonce:read'])]
     private bool $isPublished = false;
 
     #[ORM\Column(nullable: true)]

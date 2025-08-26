@@ -31,7 +31,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
         new Post(
             denormalizationContext: ['groups' => ['image:write']],
-            security: "is_granted('ROLE_USER')"
+            security: "is_granted('ROLE_USER') and object.getLogementImage().getLogementUtilisateur() == user"
         ),
 
         new Patch(

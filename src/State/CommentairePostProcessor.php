@@ -35,10 +35,10 @@ class CommentairePostProcessor implements ProcessorInterface
         // Force l’utilisateur connecté
         $data->setCommentaireUtilisateur($user);
 
-        // Si la date n’est pas envoyée, on met maintenant
         if (!$data->getDatePublication()) {
-            $data->setDatePublication(new \DateTime());
+            $data->setDatePublication(new \DateTimeImmutable());
         }
+
 
         $this->entityManager->persist($data);
         $this->entityManager->flush();

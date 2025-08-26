@@ -17,18 +17,19 @@ class ReservationRepository extends ServiceEntityRepository
         parent::__construct($registry, Reservation::class);
     }
 
-    public function hasReservation(Annonce $annonce, \DateTimeInterface $dateDebut, \DateTimeInterface $dateFin): bool
+    public function hasReservation(Annonce $reservationAnnonce, \DateTimeInterface $dateDebut, \DateTimeInterface $dateFin): bool
     {
-        return (bool) $this->createQueryBuilder('r')
-            ->select('COUNT(r.id)')
-            ->andWhere('r.reservationAnnonce = :annonce')
-            ->andWhere('r.status = :status') // uniquement les réservations validées
-            ->andWhere('(:dateDebut BETWEEN r.dateDebut AND r.dateFin OR :dateFin BETWEEN r.dateDebut AND r.dateFin)')
-            ->setParameter('annonce', $annonce)
-            ->setParameter('status', 'validee')
+        $qb = $this->createQueryBuilder('r');
+
+        $count = (int) $qb->select('COUNT(r.id)')
+            ->where('r.reservationAnnonce = :annonce')
+            ->andWhere('r.dateDebut < :dateFin')
+            ->andWhere('r.dateFin > :dateDebut')
+            ->setParameter('annonce', $reservationAnnonce)
             ->setParameter('dateDebut', $dateDebut)
             ->setParameter('dateFin', $dateFin)
             ->getQuery()
-            ->getSingleScalarResult() > 0;
+            ->getSingleScalarResult();
+        return $count > 0;
     }
 }

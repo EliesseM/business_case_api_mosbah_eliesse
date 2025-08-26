@@ -31,6 +31,11 @@ class ReservationPostProcessor implements ProcessorInterface
         if (!$user) {
             throw new AccessDeniedHttpException('Vous devez être connecté pour créer une réservation.');
         }
+        // Force l’utilisateur connecté
+        $data->setReservationUtilisateur($user);
+
+        // ajout de status pending a la creation de la reservation
+        $data->setStatus('pending');
 
         // Vérifie qu’une annonce est associée
         $annonce = $data->getReservationAnnonce();
@@ -68,9 +73,6 @@ class ReservationPostProcessor implements ProcessorInterface
         ) {
             throw new BadRequestHttpException('Le logement est déjà réservé ou indisponible pour ces dates.');
         }
-
-        // Force l’utilisateur connecté
-        $data->setReservationUtilisateur($user);
 
         // Définit createdAt si absent
         if (!$data->getCreatedAt()) {

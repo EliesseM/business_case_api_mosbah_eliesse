@@ -9,6 +9,7 @@ use App\Entity\Utilisateur;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class AnnoncePostProcessor implements ProcessorInterface
 {
@@ -20,9 +21,14 @@ class AnnoncePostProcessor implements ProcessorInterface
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): Annonce
     {
         // Vérification de la cohérence des données
-        if (!$data instanceof Annonce || null === $data->getAnnonceLogement()) {
+        if (!$data instanceof Annonce) {
             return $data;
         }
+
+        if (null === $data->getAnnonceLogement()) {
+            throw new BadRequestHttpException('Un logement doit être associé à l’annonce.');
+        }
+
 
         // Récupération de l'utilisateur connecté
         $utilisateur = $this->security->getUser();

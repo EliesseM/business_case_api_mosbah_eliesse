@@ -61,19 +61,20 @@ class Reservation
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Groups(['reservation:read', 'reservation:write'])]
     #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y'])]
-    private ?\DateTime $dateDebut = null;
+    private ?\DateTimeImmutable $dateDebut = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    #[Groups(['reservation:read', 'reservation:write'])]
+    #[Groups(['reservation:read',])]
     #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y'])]
-    private ?\DateTime $dateFin = null;
+    private ?\DateTimeImmutable $dateFin = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['reservation:read', 'reservation:write', 'reservation:patch'])]
+    #[Groups(['reservation:read'])]
     private ?string $status = null;
 
     #[ORM\Column]
     #[Groups(['reservation:read', 'reservation:write'])]
+    #[Assert\Positive(message: 'Le prix total doit être un nombre positif.')]
     private ?float $prixTotal = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
@@ -86,7 +87,7 @@ class Reservation
     private ?Annonce $reservationAnnonce = null;
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]
-    #[Groups(['reservation:read', 'reservation:write'])]
+    #[Groups(['reservation:read'])]
     private ?Utilisateur $reservationUtilisateur = null;
 
     #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'commentaireReservation', cascade: ['persist', 'remove'])]
@@ -95,7 +96,7 @@ class Reservation
     // donnée pour calculé la date de fin, exprimée en mois, non stockée en bdd
     #[Assert\NotNull(message: 'La durée est obligatoire.')]
     #[Assert\Type('integer', message: 'La durée doit être un entier (mois).')]
-    #[Assert\Range(min: 1, max: 24, notInRangeMessage: 'La durée doit être comprise entre {{ min }} et {{ max }} mois.')]
+    #[Assert\Range(min: 1, max: 36, notInRangeMessage: 'La durée doit être comprise entre {{ min }} et {{ max }} mois.')]
     #[Groups(['reservation:write'])]
     private ?int $duree = null;
 
@@ -110,23 +111,23 @@ class Reservation
         return $this->id;
     }
 
-    public function getDateDebut(): ?\DateTime
+    public function getDateDebut(): ?\DateTimeImmutable
     {
         return $this->dateDebut;
     }
 
-    public function setDateDebut(\DateTime $dateDebut): static
+    public function setDateDebut(\DateTimeImmutable $dateDebut): static
     {
         $this->dateDebut = $dateDebut;
         return $this;
     }
 
-    public function getDateFin(): ?\DateTime
+    public function getDateFin(): ?\DateTimeImmutable
     {
         return $this->dateFin;
     }
 
-    public function setDateFin(\DateTime $dateFin): static
+    public function setDateFin(\DateTimeImmutable $dateFin): static
     {
         $this->dateFin = $dateFin;
         return $this;

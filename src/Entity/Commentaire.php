@@ -20,6 +20,8 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use Symfony\Component\Validator\Constraints as Assert;
+use App\State\CommentairePostProcessor;
 
 #[ORM\Entity(repositoryClass: CommentaireRepository::class)]
 #[ApiResource(
@@ -41,7 +43,8 @@ use ApiPlatform\Metadata\Put;
         ),
         new Post(
             denormalizationContext: ['groups' => ['commentaire:write']],
-            security: "is_granted('ROLE_USER')"
+            security: "is_granted('ROLE_USER')",
+            processor: CommentairePostProcessor::class
         ),
         new Put(
             denormalizationContext: ['groups' => ['commentaire:write']],
@@ -71,6 +74,11 @@ class Commentaire
 
     #[ORM\Column]
     #[Groups(['commentaire:list', 'commentaire:read', 'commentaire:write'])]
+    #[Assert\Range(
+        min: 1,
+        max: 5,
+        notInRangeMessage: "La note ne peut pas etre 0 ou inferieure"
+    )]
     private ?int $note = null;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -78,17 +86,17 @@ class Commentaire
     private ?string $commentaire = null;
 
     #[ORM\Column]
-    #[Groups(['commentaire:read', 'commentaire:write'])]
+    #[Groups(['commentaire:read'])]
     #[SerializedName('datePublication')]
     #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y'])]
-    private ?\DateTime $datePublication = null;
+    private ?\DateTimeImmutable $datePublication = null;
 
     #[ORM\ManyToOne(inversedBy: 'commentaires')]
-    #[Groups(['commentaire:read', 'commentaire:write'])]
+    #[Groups(['commentaire:read'])]
     private ?Utilisateur $commentaireUtilisateur = null;
 
     #[ORM\ManyToOne(inversedBy: 'commentaires')]
-    #[Groups(['commentaire:read', 'commentaire:write'])]
+    #[Groups(['commentaire:read'])]
     private ?Reservation $commentaireReservation = null;
 
     // Getters & Setters
@@ -120,12 +128,12 @@ class Commentaire
         return $this;
     }
 
-    public function getDatePublication(): ?\DateTime
+    public function getDatePublication(): ?\DateTimeImmutable
     {
         return $this->datePublication;
     }
 
-    public function setDatePublication(\DateTime $datePublication): static
+    public function setDatePublication(\DateTimeImmutable $datePublication): static
     {
         $this->datePublication = $datePublication;
         return $this;
