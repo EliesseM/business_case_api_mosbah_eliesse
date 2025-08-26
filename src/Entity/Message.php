@@ -67,7 +67,7 @@ class Message
     private ?Utilisateur $messageReceiver = null;
 
     #[ORM\ManyToOne(inversedBy: 'messagesSent')]
-    #[Groups(['message:read', 'message:write'])]
+    #[Groups(['message:read'])]
     private ?Utilisateur $messageSender = null;
 
     public function __construct()
