@@ -1,4 +1,6 @@
 api_platform:
+  formats:
+    json: ["application/json"]
   title: Hello API Platform
   version: 1.0.0
   defaults:
