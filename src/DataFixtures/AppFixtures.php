@@ -148,10 +148,14 @@ class AppFixtures extends Fixture
             $dateDebut = $faker->dateTimeBetween('now', '+1 month');
             $dateFin = (clone $dateDebut)->modify('+' . rand(1, 14) . ' days');
 
+            // Convert to DateTimeImmutable
+            $dateDebutImmutable = \DateTimeImmutable::createFromMutable($dateDebut);
+            $dateFinImmutable = \DateTimeImmutable::createFromMutable($dateFin);
+
             $reservation = new Reservation();
             $reservation
-                ->setDateDebut($dateDebut)
-                ->setDateFin($dateFin)
+                ->setDateDebut($dateDebutImmutable)
+                ->setDateFin($dateFinImmutable)
                 ->setStatus($faker->randomElement(['pending', 'confirmed', 'cancelled']))
                 ->setPrixTotal($faker->numberBetween(100, 5000))
                 ->setCreatedAt(new \DateTimeImmutable())
@@ -168,7 +172,7 @@ class AppFixtures extends Fixture
         $commentaire
             ->setCommentaire($faker->sentence(10))
             ->setNote($faker->numberBetween(1, 5))
-            ->setDatePublication($faker->dateTimeBetween('-6 months'))
+            ->setDatePublication(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween('-6 months')))
             ->setCommentaireUtilisateur($faker->randomElement($utilisateurs))
             ->setCommentaireReservation($faker->randomElement($reservations));
 
