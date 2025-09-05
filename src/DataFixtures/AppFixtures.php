@@ -122,25 +122,37 @@ class AppFixtures extends Fixture
         }
 
         // ANNONCES
+        $annoncesData = json_decode(file_get_contents(__DIR__ . '/data/annonce.json'), true);
+
         $annonces = [];
-        for ($i = 0; $i < 30; $i++) {
+        foreach ($annoncesData as $item) {
             $annonce = new Annonce();
             $annonce
-                ->setTitre($faker->catchPhrase())
-                ->setDescription($faker->paragraph())
-                ->setPrixJournee($faker->numberBetween(20, 500))
-                ->setNbPlaces($faker->numberBetween(1, 10))
-                ->setMixte($faker->boolean())
+                ->setTitre($item['titre'] ?? '')
+                ->setDescription($item['description'] ?? '')
+                ->setPrixJournee($item['prixJournee'] ?? 0)
+                ->setNbPlaces($item['nbPlaces'] ?? 1)
+                ->setMixte($item['mixte'] ?? false)
                 ->setAnnonceUtilisateur($faker->randomElement($utilisateurs))
                 ->setAnnonceLogement($faker->randomElement($logements));
 
+
             foreach ($faker->randomElements($services, rand(1, 3)) as $service) {
                 $annonce->addService($service);
+            }
+            // Services associés
+            if (!empty($item['services'])) {
+                foreach ($item['services'] as $serviceId) {
+                    if (isset($services[$serviceId])) {
+                        $annonce->addService($services[$serviceId]);
+                    }
+                }
             }
 
             $manager->persist($annonce);
             $annonces[] = $annonce;
         }
+
 
         // RESERVATIONS
         $reservations = [];
