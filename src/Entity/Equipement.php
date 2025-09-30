@@ -68,7 +68,7 @@ class Equipement
     #[Groups(['equipement:read', 'equipement:write'])]
     private ?string $description = null;
 
-    #[ORM\Column(nullable: true)]
+
     #[ORM\ManyToMany(targetEntity: Logement::class, mappedBy: 'equipements')]
     #[Groups(['equipement:read'])]
     private Collection $logements;
