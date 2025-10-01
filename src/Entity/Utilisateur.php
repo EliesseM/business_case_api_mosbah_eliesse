@@ -26,37 +26,51 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
+// Indique que cette classe est une entité Doctrine (mappée à une table en BDD)
+// et précise le repository associé (ici UtilisateurRepository).
+
 #[UniqueEntity('email', message: 'Cet email est déjà utilisé')]
+// Validation : impose que l’email soit unique dans la base.
+// Si doublon → message d’erreur personnalisé.
+
 #[ApiResource(
-    normalizationContext: ['groups' => ['user:read']],
-    denormalizationContext: ['groups' => ['user:write']],
+    normalizationContext: ['groups' => ['user:read']], // Détermine les groupes de sérialisation pour lecture
+    denormalizationContext: ['groups' => ['user:write']], // Groupes pour désérialisation (écriture)
     operations: [
+        // -------------------- GET COLLECTION --------------------
         new GetCollection(
-            security: "is_granted('ROLE_ADMIN')",
-            normalizationContext: ['groups' => ['user:read', 'user:list']],
-            paginationEnabled: true,
-            paginationItemsPerPage: 10
+            security: "is_granted('ROLE_ADMIN')", // Seuls les admins peuvent voir la liste complète
+            normalizationContext: ['groups' => ['user:read', 'user:list']], // Sérialisation spéciale pour liste
+            paginationEnabled: true, // Active la pagination
+            paginationItemsPerPage: 10 // Limite 10 utilisateurs par page
         ),
+        // -------------------- GET ITEM --------------------
         new Get(
             security: "is_granted('ROLE_ADMIN') or object == user",
-            normalizationContext: ['groups' => ['user:read', 'user:item']]
+            // Autorisation : admin OU le propriétaire de l’objet
+            normalizationContext: ['groups' => ['user:read', 'user:item']] // Sérialisation détaillée pour un utilisateur
         ),
+        // -------------------- POST (CREATION) --------------------
         new Post(
-            name: 'create_user',
-            security: "is_granted('PUBLIC_ACCESS')",
-            denormalizationContext: ['groups' => ['user:create']],
+            name: 'create_user', // Nom symbolique de l’opération
+            security: "is_granted('PUBLIC_ACCESS')", // Accessible publiquement (ex: inscription)
+            denormalizationContext: ['groups' => ['user:create']], // Champs utilisables à la création
             processor: UtilisateurPasswordHasherProcessor::class
+            // Classe qui hache le mot de passe avant l’insertion
         ),
+        // -------------------- PATCH --------------------
         new Patch(
-            security: "is_granted('ROLE_ADMIN') or object == user",
-            denormalizationContext: ['groups' => ['user:update']]
+            security: "is_granted('ROLE_ADMIN') or object == user", // Admin ou utilisateur lui-même
+            denormalizationContext: ['groups' => ['user:update']] // Champs modifiables
         ),
+        // -------------------- PUT --------------------
         new Put(
             security: "is_granted('ROLE_ADMIN') or object == user",
             denormalizationContext: ['groups' => ['user:update']]
         ),
+        // -------------------- DELETE --------------------
         new Delete(
-            security: "is_granted('ROLE_ADMIN')"
+            security: "is_granted('ROLE_ADMIN')" // Seul un admin peut supprimer un compte
         )
     ]
 )]
@@ -66,49 +80,65 @@ use Symfony\Component\Validator\Constraints as Assert;
     'prenom' => 'partial',
     'roles' => 'partial',
 ])]
+// Ajoute des filtres de recherche partielle (LIKE %motcle%) pour certains champs.
+
 #[ApiFilter(OrderFilter::class, properties: ['email', 'nom'], arguments: ['orderParameterName' => 'order'])]
+// Permet d’ordonner les résultats par email ou nom via un paramètre "order".
+
 class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    // ---------------------------
+    // PROPRIÉTÉS DE BASE
+    // ---------------------------
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     #[Groups(['user:read'])]
     private ?int $id = null;
+    // Identifiant auto-incrémenté unique de l’utilisateur.
 
     #[ORM\Column]
     #[Groups(['user:read'])]
     private array $roles = [];
+    // Tableau des rôles (par défaut ROLE_USER sera ajouté automatiquement).
 
     #[ORM\Column(length: 255, unique: true)]
     #[Groups(['user:read', 'user:create', 'user:write'])]
     #[Assert\NotBlank]
     private ?string $username = null;
+    // Pseudonyme unique, obligatoire.
 
     #[ORM\Column(length: 255)]
     #[Groups(['user:read', 'user:create', 'user:write'])]
     private ?string $genre = null;
+    // Genre de l’utilisateur (H/F/Autre).
 
     #[ORM\Column(length: 255)]
     #[Groups(['user:read', 'user:create', 'user:write'])]
     #[Assert\NotBlank]
     private ?string $nom = null;
+    // Nom de famille, obligatoire.
 
     #[ORM\Column(length: 255)]
     #[Groups(['user:read', 'user:create', 'user:write'])]
     #[Assert\NotBlank]
     private ?string $prenom = null;
+    // Prénom, obligatoire.
 
     #[ORM\Column(length: 255, unique: true)]
     #[Groups(['user:read', 'user:create', 'user:write'])]
     #[Assert\NotBlank]
     #[Assert\Email]
     private ?string $email = null;
+    // Email unique, obligatoire, doit être un email valide.
 
     #[ORM\Column(length: 255)]
     #[Groups(['user:create', 'user:write'])]
     #[Assert\NotBlank]
     #[Assert\Length(min: 8)]
     private ?string $password = null;
+    // Mot de passe (haché par le processor), obligatoire et ≥ 8 caractères.
 
     #[ORM\Column(type: 'datetime')]
     #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y'])]
@@ -116,52 +146,69 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotNull]
     #[Assert\LessThan('today')]
     private ?\DateTime $dateNaissance = null;
+    // Date de naissance (format JJ/MM/AAAA), obligatoire et doit être passée.
 
     #[ORM\Column(type: 'datetime_immutable')]
     #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y'])]
     #[Groups(['user:read'])]
     private ?\DateTimeImmutable $createdAt = null;
+    // Date de création automatique de l’utilisateur.
 
     #[ORM\Column]
     #[Groups(['user:read'])]
     private bool $isVerified = false;
+    // Indique si le compte est vérifié (ex: par mail).
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['user:read', 'user:create', 'user:write'])]
     private ?string $profilPicture = null;
+    // URL ou chemin vers l’image de profil.
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['user:read', 'user:create', 'user:write'])]
     private ?string $billingAddress = null;
+    // Adresse de facturation éventuelle.
+
+    // ---------------------------
+    // RELATIONS DOCTRINE
+    // ---------------------------
 
     #[ORM\OneToMany(targetEntity: Annonce::class, mappedBy: 'annonceUtilisateur')]
-    private Collection $annonces;
+    private Collection $annonces; // Liste des annonces créées par l’utilisateur.
 
     #[ORM\OneToMany(targetEntity: Logement::class, mappedBy: 'logementUtilisateur')]
-    private Collection $logements;
+    private Collection $logements; // Liste des logements liés.
 
     #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'commentaireUtilisateur')]
-    private Collection $commentaires;
+    private Collection $commentaires; // Commentaires laissés par l’utilisateur.
 
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'messageReceiver')]
-    private Collection $messagesReceived;
+    private Collection $messagesReceived; // Messages reçus par l’utilisateur.
 
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'messageSender')]
-    private Collection $messagesSent;
+    private Collection $messagesSent; // Messages envoyés.
 
     #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'utilisateur')]
-    private Collection $reservations;
+    private Collection $reservations; // Réservations associées.
 
+    // ---------------------------
+    // CONSTRUCTEUR
+    // ---------------------------
     public function __construct()
     {
+        // Initialise toutes les collections Doctrine comme des ArrayCollection
         $this->annonces = new ArrayCollection();
         $this->logements = new ArrayCollection();
         $this->commentaires = new ArrayCollection();
         $this->messagesReceived = new ArrayCollection();
         $this->messagesSent = new ArrayCollection();
         $this->reservations = new ArrayCollection();
-        $this->createdAt = new \DateTimeImmutable();
+        $this->createdAt = new \DateTimeImmutable(); // Date de création définie automatiquement
     }
+
+    // ---------------------------
+    // GETTERS / SETTERS
+    // ---------------------------
 
     public function getId(): ?int
     {
@@ -171,8 +218,8 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        $roles[] = 'ROLE_USER';
-        return array_unique($roles);
+        $roles[] = 'ROLE_USER'; // Ajoute par défaut "ROLE_USER" à chaque compte
+        return array_unique($roles); // Supprime les doublons éventuels
     }
 
     public function setRoles(array $roles): self
@@ -185,12 +232,12 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return (string) $this->username;
     }
+    // Méthode imposée par Symfony pour identifier l’utilisateur.
 
     public function getUsername(): ?string
     {
         return $this->username;
     }
-
     public function setUsername(string $username): self
     {
         $this->username = $username;
@@ -201,7 +248,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->genre;
     }
-
     public function setGenre(string $genre): self
     {
         $this->genre = $genre;
@@ -212,7 +258,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->nom;
     }
-
     public function setNom(string $nom): self
     {
         $this->nom = $nom;
@@ -223,7 +268,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->prenom;
     }
-
     public function setPrenom(string $prenom): self
     {
         $this->prenom = $prenom;
@@ -234,7 +278,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->email;
     }
-
     public function setEmail(string $email): self
     {
         $this->email = $email;
@@ -245,7 +288,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->password;
     }
-
     public function setPassword(string $password): self
     {
         $this->password = $password;
@@ -256,7 +298,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->dateNaissance;
     }
-
     public function setDateNaissance(\DateTime $dateNaissance): self
     {
         $this->dateNaissance = $dateNaissance;
@@ -267,7 +308,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->createdAt;
     }
-
     public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
@@ -278,7 +318,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->isVerified;
     }
-
     public function setIsVerified(bool $isVerified): self
     {
         $this->isVerified = $isVerified;
@@ -289,7 +328,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->profilPicture;
     }
-
     public function setProfilPicture(?string $profilPicture): self
     {
         $this->profilPicture = $profilPicture;
@@ -300,7 +338,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->billingAddress;
     }
-
     public function setBillingAddress(?string $billingAddress): self
     {
         $this->billingAddress = $billingAddress;
@@ -343,5 +380,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->reservations;
     }
 
+    // Méthode imposée par l’interface UserInterface.
+    // Utilisée pour supprimer des données sensibles temporaires.
     public function eraseCredentials(): void {}
 }
